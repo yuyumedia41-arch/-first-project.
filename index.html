@@ -4,28 +4,43 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>شريف طلعت | AI Creator & Voice Over</title>
-  <meta name="description" content="شريف طلعت — صانع فيديوهات وصور إعلانية بالذكاء الاصطناعي ومعلّق صوتي محترف.">
+  <meta name="description" content="شريف طلعت — صانع فيديوهات وصور إعلانية بالذكاء الاصطناعي ومعلّق صوتي.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Aref+Ruqaa:wght@700&family=Cairo:wght@400;600;700;900&family=Inter:wght@400;500;600&family=Mr+Dafoe&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Aref+Ruqaa:wght@700&family=Cairo:wght@400;600;700;900&family=Inter:wght@300;400;500;600&family=Mr+Dafoe&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <!-- Preloader -->
+  <div class="loader" aria-hidden="true">
+    <div class="loader-name en">SHERIF <span class="red">TALAAT</span></div>
+    <div class="loader-bar"><span></span></div>
+  </div>
+
+  <div class="grain" aria-hidden="true"></div>
+  <div class="progress" aria-hidden="true"></div>
+  <div class="cursor" aria-hidden="true"></div>
+  <div class="cursor-ring" aria-hidden="true"></div>
 
   <!-- ===== Top bar ===== -->
   <header class="topbar" id="nav">
-    <div class="brand">
+    <a href="#home" class="brand">
       <span class="en red">AI VISUAL CREATOR</span>
       <span class="en">VOICE OVER ARTIST</span>
-    </div>
+    </a>
     <nav class="nav-links" id="navLinks">
-      <a href="#work">الأعمال</a>
-      <a href="#skills">الخدمات</a>
-      <a href="#voice">فويس أوفر</a>
-      <a href="#contact">تواصل</a>
+      <a href="#work" data-i18n="nav_work">الأعمال</a>
+      <a href="#skills" data-i18n="nav_services">الخدمات</a>
+      <a href="#voice" data-i18n="nav_voice">فويس أوفر</a>
+      <a href="#contact" data-i18n="nav_contact">تواصل</a>
     </nav>
-    <div class="avail en">AVAILABLE FOR FREELANCE <span class="red">✦</span></div>
-    <button class="menu-btn" id="menuBtn" aria-label="القائمة"><span></span><span></span></button>
+    <div class="top-actions">
+      <span class="avail en"><i class="dot"></i>AVAILABLE FOR FREELANCE</span>
+      <button class="lang" id="langBtn" aria-label="Change language">
+        <span data-l="ar">ع</span><span data-l="en">EN</span>
+      </button>
+      <button class="menu-btn" id="menuBtn" aria-label="Menu"><span></span><span></span></button>
+    </div>
   </header>
 
   <main>
@@ -33,65 +48,65 @@
     <section class="hero" id="home">
       <h1 class="giant" dir="ltr" aria-hidden="true">PORTFOLIO</h1>
 
-      <img class="hero-photo" src="assets/images/sherif-cutout.webp" alt="شريف طلعت" width="900" height="1381">
+      <div class="hero-figure">
+        <img class="hero-photo" src="assets/images/sherif-cutout.webp" alt="Sherif Talaat" width="900" height="1381">
+      </div>
 
       <div class="hero-intro reveal">
-        <p class="script">أهلاً، أنا</p>
-        <h2 class="name">شريف <br>طلعت</h2>
-        <p class="role">صانع محتوى بالـ AI<br>ومعلّق صوتي</p>
-        <p class="bio">بصمّم وبنفّذ فيديوهات وصور إعلانية بالذكاء الاصطناعي، وبدّي لرسالتك صوت يوصل. بجمع بين الإبداع والاستراتيجية عشان أعمل إعلانات بتتشاف وتتفتكر.</p>
-        <p class="meta"><svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18"/></svg> متاح للعمل حول العالم</p>
+        <p class="script" data-i18n="hello">أهلاً، أنا</p>
+        <h2 class="name" data-i18n="name">شريف <br>طلعت</h2>
+        <p class="role" data-i18n="role">صانع محتوى بالـ AI<br>ومعلّق صوتي</p>
+        <p class="bio" data-i18n="bio">بصمّم وبنفّذ فيديوهات وصور إعلانية بالذكاء الاصطناعي، وبدّي لرسالتك صوت يوصل. بجمع بين الإبداع والاستراتيجية عشان أعمل إعلانات بتتشاف وتتفتكر.</p>
+        <div class="hero-cta">
+          <a href="#work" class="btn magnetic"><span data-i18n="cta_work">شوف أعمالي</span></a>
+          <a href="#contact" class="link-arrow" data-i18n="cta_contact">ابدأ مشروعك</a>
+        </div>
       </div>
 
       <div class="hero-tag reveal">
         <span class="spark">✦</span>
-        <p>بحوّل الأفكار<br>لإعلانات بتأثّر.</p>
+        <p data-i18n="tag">بحوّل الأفكار<br>لإعلانات بتأثّر.</p>
       </div>
 
       <ul class="stats reveal">
-        <li><strong><span data-count="5">0</span>+</strong><span>سنين<br>خبرة</span></li>
-        <li><strong><span data-count="150">0</span>+</strong><span>مشروع<br>مكتمل</span></li>
-        <li><strong><span data-count="60">0</span>+</strong><span>عميل<br>سعيد</span></li>
+        <li><strong data-count="1">0</strong><span data-i18n="stat_exp">أسبوع<br>خبرة</span></li>
+        <li><strong data-count="2">0</strong><span data-i18n="stat_projects">مشاريع<br>مكتملة</span></li>
+        <li><strong data-count="3">0</strong><span data-i18n="stat_services">خدمات<br>إبداعية</span></li>
       </ul>
+
+      <a href="#work" class="scroll-hint en" aria-label="Scroll"><span></span>SCROLL</a>
     </section>
+
+    <!-- ===== Marquee ===== -->
+    <div class="ribbon" aria-hidden="true">
+      <div class="ribbon-track en">
+        <span>AI VIDEO</span><b>✦</b><span>AI ADS</span><b>✦</b><span>VOICE OVER</span><b>✦</b><span>PRODUCT SHOTS</span><b>✦</b><span>REELS</span><b>✦</b>
+        <span>AI VIDEO</span><b>✦</b><span>AI ADS</span><b>✦</b><span>VOICE OVER</span><b>✦</b><span>PRODUCT SHOTS</span><b>✦</b><span>REELS</span><b>✦</b>
+      </div>
+    </div>
 
     <!-- ===== Selected work ===== -->
     <section class="block" id="work">
       <div class="block-head reveal">
-        <h3>أعمال مختارة</h3>
+        <span class="idx en">(01)</span>
+        <h3 data-i18n="work_title">أعمال مختارة</h3>
         <span class="line"></span>
-        <div class="filters" role="tablist">
-          <button class="filter active" data-filter="all">الكل</button>
-          <button class="filter" data-filter="video">فيديو</button>
-          <button class="filter" data-filter="image">صور</button>
-        </div>
+        <a href="#contact" class="link-arrow small" data-i18n="work_all">اطلب مشروعك</a>
       </div>
 
       <!-- استبدل محتوى .shot بصورة أو فيديو حقيقي: <img src="assets/images/work-1.jpg" alt=""> -->
       <div class="projects">
-        <article class="project reveal" data-type="video">
-          <div class="shot s1"><span class="play">▶</span><b dir="ltr">NOIR<br><i>PARFUM</i></b></div>
-          <div class="project-info"><em>01</em><div><strong>إعلان عطر فاخر</strong><span>فيديو AI · 30 ثانية</span></div><span class="arrow">←</span></div>
+        <article class="project reveal">
+          <div class="shot s1"><span class="play">▶</span><b dir="ltr">NOIR<br><i>PARFUM</i></b><span class="shot-tag en">AI VIDEO</span></div>
+          <div class="project-info"><em>01</em><div><strong data-i18n="p1">إعلان عطر فاخر</strong><span data-i18n="p1s">فيديو AI · 30 ثانية</span></div><span class="arrow">↗</span></div>
         </article>
-        <article class="project reveal" data-type="image">
-          <div class="shot s2"><b dir="ltr">FRESH<br>SUMMER<br>DROP</b></div>
-          <div class="project-info"><em>02</em><div><strong>حملة مشروبات صيفية</strong><span>صور إعلانية AI</span></div><span class="arrow">←</span></div>
+        <article class="project reveal">
+          <div class="shot s2"><b dir="ltr">FRESH<br>SUMMER<br>DROP</b><span class="shot-tag en">AI IMAGES</span></div>
+          <div class="project-info"><em>02</em><div><strong data-i18n="p2">حملة مشروبات صيفية</strong><span data-i18n="p2s">صور إعلانية AI</span></div><span class="arrow">↗</span></div>
         </article>
-        <article class="project reveal" data-type="video">
-          <div class="shot s3"><span class="play">▶</span><b dir="ltr">STAY<br>AHEAD<br>IN STYLE</b></div>
-          <div class="project-info"><em>03</em><div><strong>ريلز براند أزياء</strong><span>AI Reel + فويس أوفر</span></div><span class="arrow">←</span></div>
-        </article>
-        <article class="project reveal" data-type="image">
-          <div class="shot s4"><b dir="ltr">PURE<br><i>GLOW</i></b></div>
-          <div class="project-info"><em>04</em><div><strong>تصوير منتجات تجميل</strong><span>AI Product Shots</span></div><span class="arrow">←</span></div>
-        </article>
-        <article class="project reveal" data-type="video">
-          <div class="shot s5"><span class="play">▶</span><b dir="ltr">LAUNCH<br>DAY</b></div>
-          <div class="project-info"><em>05</em><div><strong>فيديو إطلاق تطبيق</strong><span>فيديو AI + تعليق صوتي</span></div><span class="arrow">←</span></div>
-        </article>
-        <article class="project reveal" data-type="image">
-          <div class="shot s6"><b dir="ltr">BURGER<br><i>NIGHTS</i></b></div>
-          <div class="project-info"><em>06</em><div><strong>بوستر مطعم</strong><span>AI Poster</span></div><span class="arrow">←</span></div>
+        <article class="project reveal">
+          <div class="shot s3"><span class="play">▶</span><b dir="ltr">STAY<br>AHEAD<br><i>IN STYLE</i></b><span class="shot-tag en">VOICE OVER</span></div>
+          <div class="project-info"><em>03</em><div><strong data-i18n="p3">ريلز براند أزياء</strong><span data-i18n="p3s">AI Reel + فويس أوفر</span></div><span class="arrow">↗</span></div>
         </article>
       </div>
     </section>
@@ -99,12 +114,13 @@
     <!-- ===== Skills / Process / Quote ===== -->
     <section class="triple" id="skills">
       <div class="col reveal">
-        <h3>الخدمات والأدوات</h3>
-        <p class="label">الخدمات</p>
-        <div class="service"><strong>فيديوهات إعلانية بالـ AI</strong><span>إعلانات، ريلز، فيديوهات براند</span></div>
-        <div class="service"><strong>صور إعلانية بالـ AI</strong><span>تصوير منتجات، بوسترات، حملات</span></div>
-        <div class="service"><strong>فويس أوفر احترافي</strong><span>مصري وفصحى · إعلانات ووثائقي</span></div>
-        <p class="label">الأدوات</p>
+        <span class="idx en">(02)</span>
+        <h3 data-i18n="services_title">الخدمات والأدوات</h3>
+        <p class="label" data-i18n="services_label">الخدمات</p>
+        <div class="service"><strong data-i18n="sv1">فيديوهات إعلانية بالـ AI</strong><span data-i18n="sv1s">إعلانات، ريلز، فيديوهات براند</span></div>
+        <div class="service"><strong data-i18n="sv2">صور إعلانية بالـ AI</strong><span data-i18n="sv2s">تصوير منتجات، بوسترات، حملات</span></div>
+        <div class="service"><strong data-i18n="sv3">فويس أوفر احترافي</strong><span data-i18n="sv3s">مصري وفصحى · إعلانات ووثائقي</span></div>
+        <p class="label" data-i18n="tools_label">الأدوات</p>
         <div class="tags en">
           <span>MIDJOURNEY</span><span>RUNWAY</span><span>KLING</span><span>HIGGSFIELD</span>
           <span>VEO</span><span>PHOTOSHOP</span><span>PREMIERE PRO</span><span>AUDITION</span>
@@ -112,29 +128,31 @@
       </div>
 
       <div class="col reveal">
-        <h3>خطوات الشغل</h3>
+        <span class="idx en">(03)</span>
+        <h3 data-i18n="process_title">خطوات الشغل</h3>
         <ol class="steps">
-          <li><em>01</em><span class="circle"><svg class="ico" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="m20 20-4.5-4.5"/></svg></span><div><strong>الفهم</strong><p>نفهم البراند والجمهور وهدف الإعلان.</p></div></li>
-          <li><em>02</em><span class="circle"><svg class="ico" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9V16h7v-2.1A6 6 0 0 0 12 3Z"/></svg></span><div><strong>الفكرة</strong><p>سكريبت وستوري بورد وتوجّه بصري.</p></div></li>
-          <li><em>03</em><span class="circle"><svg class="ico" viewBox="0 0 24 24"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="m16 10 5-3v10l-5-3"/></svg></span><div><strong>الإنتاج</strong><p>توليد الصور والفيديو بالـ AI.</p></div></li>
-          <li><em>04</em><span class="circle"><svg class="ico" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></span><div><strong>الصوت</strong><p>تسجيل الفويس أوفر ومكس الصوت.</p></div></li>
-          <li><em>05</em><span class="circle"><svg class="ico" viewBox="0 0 24 24"><path d="M21 3 10 14M21 3l-7 18-4-7-7-4 18-7Z"/></svg></span><div><strong>التسليم</strong><p>كل المقاسات جاهزة للنشر.</p></div></li>
+          <li><em>01</em><span class="circle"><svg class="ico" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="m20 20-4.5-4.5"/></svg></span><div><strong data-i18n="st1">الفهم</strong><p data-i18n="st1s">نفهم البراند والجمهور وهدف الإعلان.</p></div></li>
+          <li><em>02</em><span class="circle"><svg class="ico" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9V16h7v-2.1A6 6 0 0 0 12 3Z"/></svg></span><div><strong data-i18n="st2">الفكرة</strong><p data-i18n="st2s">سكريبت وستوري بورد وتوجّه بصري.</p></div></li>
+          <li><em>03</em><span class="circle"><svg class="ico" viewBox="0 0 24 24"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="m16 10 5-3v10l-5-3"/></svg></span><div><strong data-i18n="st3">الإنتاج</strong><p data-i18n="st3s">توليد الصور والفيديو بالـ AI.</p></div></li>
+          <li><em>04</em><span class="circle"><svg class="ico" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></span><div><strong data-i18n="st4">الصوت</strong><p data-i18n="st4s">تسجيل الفويس أوفر ومكس الصوت.</p></div></li>
+          <li><em>05</em><span class="circle"><svg class="ico" viewBox="0 0 24 24"><path d="M21 3 10 14M21 3l-7 18-4-7-7-4 18-7Z"/></svg></span><div><strong data-i18n="st5">التسليم</strong><p data-i18n="st5s">كل المقاسات جاهزة للنشر.</p></div></li>
         </ol>
       </div>
 
       <div class="col quote reveal">
         <span class="qmark">“</span>
-        <p>الإعلان الحلو<br>مش بس شكله،<br>ده إزاي بيخلّيك<br>تحس.</p>
+        <p class="quote-text" data-i18n="quote">الإعلان الحلو<br>مش بس شكله،<br>ده إزاي بيخلّيك<br>تحس.</p>
         <span class="sign" dir="ltr">Sherif</span>
-        <p class="small">يلا نعمل حاجة<br>تفضل في الذاكرة.</p>
-        <span class="spark">✦</span>
+        <p class="small" data-i18n="quote_cta">يلا نعمل حاجة<br>تفضل في الذاكرة.</p>
+        <span class="star">✦</span>
       </div>
     </section>
 
     <!-- ===== Voice ===== -->
     <section class="block" id="voice">
       <div class="block-head reveal">
-        <h3>اسمع صوتي</h3>
+        <span class="idx en">(04)</span>
+        <h3 data-i18n="voice_title">اسمع صوتي</h3>
         <span class="line"></span>
         <span class="en muted">VOICE OVER SAMPLES</span>
       </div>
@@ -142,20 +160,20 @@
       <div class="voices">
         <div class="voice reveal" data-src="assets/audio/commercial.mp3">
           <em>01</em>
-          <button class="voice-play" aria-label="تشغيل">▶</button>
-          <div class="voice-info"><strong>إعلان تجاري</strong><span>مصري · حماسي</span></div>
+          <button class="voice-play" aria-label="Play">▶</button>
+          <div class="voice-info"><strong data-i18n="v1">إعلان تجاري</strong><span data-i18n="v1s">مصري · حماسي</span></div>
           <div class="wave"></div>
         </div>
         <div class="voice reveal" data-src="assets/audio/documentary.mp3">
           <em>02</em>
-          <button class="voice-play" aria-label="تشغيل">▶</button>
-          <div class="voice-info"><strong>وثائقي</strong><span>فصحى · هادئ</span></div>
+          <button class="voice-play" aria-label="Play">▶</button>
+          <div class="voice-info"><strong data-i18n="v2">وثائقي</strong><span data-i18n="v2s">فصحى · هادئ</span></div>
           <div class="wave"></div>
         </div>
         <div class="voice reveal" data-src="assets/audio/corporate.mp3">
           <em>03</em>
-          <button class="voice-play" aria-label="تشغيل">▶</button>
-          <div class="voice-info"><strong>شركات و Explainer</strong><span>مصري · واثق</span></div>
+          <button class="voice-play" aria-label="Play">▶</button>
+          <div class="voice-info"><strong data-i18n="v3">شركات و Explainer</strong><span data-i18n="v3s">مصري · واثق</span></div>
           <div class="wave"></div>
         </div>
       </div>
@@ -164,25 +182,33 @@
     <!-- ===== Contact ===== -->
     <section class="contact" id="contact">
       <div class="contact-intro reveal">
-        <h3>يلا نشتغل<br>مع بعض <span class="red">✦</span></h3>
-        <p>متاح لمشاريع وتعاونات جديدة. يلا نعمل إعلان يجيب نتيجة.</p>
-        <a class="avail-btn" href="https://wa.me/20XXXXXXXXXX" target="_blank" rel="noopener"><span class="circle">←</span> متاح للعمل الحر</a>
+        <span class="idx en">(05)</span>
+        <h3 data-i18n="contact_title">يلا نشتغل<br>مع بعض <span class="red">✦</span></h3>
+        <p data-i18n="contact_text">متاح لمشاريع وتعاونات جديدة. يلا نعمل إعلان يجيب نتيجة.</p>
+        <a class="avail-btn magnetic" href="https://wa.me/20XXXXXXXXXX" target="_blank" rel="noopener"><span class="circle">↗</span> <span data-i18n="contact_btn">متاح للعمل الحر</span></a>
       </div>
 
       <ul class="contact-list reveal">
         <li><span class="circle"><svg class="ico" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></span><a class="en" href="mailto:hello@sherif-talaat.com">hello@sherif-talaat.com</a></li>
-        <li><span class="circle"><svg class="ico" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".5"/></svg></span><a class="en" href="#" target="_blank" rel="noopener">@sherif.talaat</a></li>
+        <li><span class="circle"><svg class="ico" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".5"/></svg></span><a class="en" dir="ltr" href="#" target="_blank" rel="noopener">@sherif.talaat</a></li>
         <li><span class="circle"><svg class="ico" viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg></span><a class="en" dir="ltr" href="https://wa.me/20XXXXXXXXXX">+20 XXX XXX XXXX</a></li>
-        <li><span class="circle"><svg class="ico" viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-12a7 7 0 0 1 14 0c0 5.8-7 12-7 12Z"/><circle cx="12" cy="9" r="2.5"/></svg></span><span>القاهرة، مصر</span></li>
+        <li><span class="circle"><svg class="ico" viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-12a7 7 0 0 1 14 0c0 5.8-7 12-7 12Z"/><circle cx="12" cy="9" r="2.5"/></svg></span><span data-i18n="location">القاهرة، مصر</span></li>
       </ul>
 
       <div class="contact-photo reveal">
-        <img src="assets/images/sherif.jpg" alt="شريف طلعت في باريس" loading="lazy">
+        <img src="assets/images/sherif.jpg" alt="Sherif Talaat in Paris" loading="lazy">
+        <span class="photo-cap en">PARIS — 2026</span>
       </div>
     </section>
+
+    <div class="big-sign" aria-hidden="true"><span class="en">SHERIF</span><span class="en red">TALAAT</span></div>
   </main>
 
-  <footer class="footer"><span>© <span id="year"></span> شريف طلعت</span><span class="en">AI VIDEO · AI ADS · VOICE OVER</span></footer>
+  <footer class="footer">
+    <span>© <span id="year"></span> <span data-i18n="footer_name">شريف طلعت</span></span>
+    <span class="en">AI VIDEO · AI ADS · VOICE OVER</span>
+    <a href="#home" class="en to-top">BACK TO TOP ↑</a>
+  </footer>
 
   <script src="script.js"></script>
 </body>
