@@ -46,7 +46,7 @@ document.querySelectorAll(".filter").forEach((btn) =>
     document.querySelector(".filter.active").classList.remove("active");
     btn.classList.add("active");
     const f = btn.dataset.filter;
-    document.querySelectorAll(".work").forEach((w) =>
+    document.querySelectorAll(".project").forEach((w) =>
       w.classList.toggle("hide", f !== "all" && w.dataset.type !== f)
     );
   })
@@ -54,7 +54,14 @@ document.querySelectorAll(".filter").forEach((btn) =>
 
 // Voice samples — one plays at a time
 let current = null;
-document.querySelectorAll(".voice").forEach((card) => {
+document.querySelectorAll(".voice").forEach((card, n) => {
+  const wave = card.querySelector(".wave");
+  for (let i = 0; i < 60; i++) {
+    const bar = document.createElement("i");
+    bar.style.height = 20 + Math.abs(Math.sin(i * 0.55 + n) * Math.cos(i * 0.17)) * 80 + "%";
+    bar.style.animationDelay = -(i % 7) * 0.12 + "s";
+    wave.appendChild(bar);
+  }
   const audio = new Audio(card.dataset.src);
   const btn = card.querySelector(".voice-play");
   const stop = () => {
