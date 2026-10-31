@@ -213,6 +213,7 @@ html[lang="en"] .block-head h3, html[lang="en"] .col h3, html[lang="en"] .contac
 .shot.has-media { color: #fff; }
 .shot.has-media img { object-position: center 28%; transition: transform 1s var(--ease); }
 .shot.has-media::before { content: ""; position: absolute; inset: 0; z-index: 0; background: linear-gradient(to top, rgba(8, 8, 8, .75), transparent 55%); }
+.shot.nashama img { object-position: center 45%; }
 .project:hover .shot.has-media img { transform: scale(1.06); }
 .shot.has-media .shot-tag { z-index: 1; opacity: .85; background: rgba(0, 0, 0, .35); }
 .shot {
