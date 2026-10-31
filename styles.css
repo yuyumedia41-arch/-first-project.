@@ -230,7 +230,7 @@ html[lang="en"] .block-head h3, html[lang="en"] .col h3, html[lang="en"] .contac
 .project:hover .shot::after { transform: translateX(120%); }
 .project:hover .shot b { transform: scale(1.06); }
 .s1 { background: radial-gradient(circle at 75% 60%, #6a0b10, #0b0b0b 65%); }
-.s2 { background: linear-gradient(135deg, #ece7df, #b8afa2); color: #111; }
+.s2 { background: radial-gradient(circle at 70% 40%, #7a0c12, #0d0505 70%); }
 .s3 { background: radial-gradient(circle at 25% 50%, #8e0f15, #120606 70%); }
 .play {
   position: absolute; inset-inline-start: 1.4rem; bottom: 1.4rem;
