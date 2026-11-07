@@ -1,0 +1,469 @@
+<!doctype html>
+<html lang="ar">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="fonts/fonts.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1920px;height:1080px;overflow:hidden;background:#061219}
+#stage{position:absolute;inset:0;overflow:hidden;background:radial-gradient(110% 90% at 50% 38%,#11343D 0%,#0A2129 45%,#051118 100%)}
+svg.full{position:absolute;left:0;top:0;width:1920px;height:1080px;overflow:visible}
+.layer{position:absolute;inset:0}
+.scene{position:absolute;inset:0;display:none}
+#beams{position:absolute;inset:0;mix-blend-mode:screen;pointer-events:none}
+#vig{position:absolute;inset:0;background:radial-gradient(90% 80% at 50% 45%,transparent 55%,rgba(0,0,0,.6) 100%)}
+#fade{position:absolute;inset:0;background:#000;opacity:0}
+/* verses */
+.verse{position:absolute;left:0;width:1920px;text-align:center;direction:rtl;font-family:'KFGQPC Hafs';color:#F7E6B5;line-height:1.9;white-space:nowrap;
+  text-shadow:0 0 28px rgba(255,214,140,.45),0 0 2px rgba(255,240,200,.8);transform-origin:50% 50%}
+.verse .ph{transition:none;display:inline}
+.verse .ph.on{color:#FFD77A;text-shadow:0 0 30px rgba(255,200,90,.95),0 0 60px rgba(255,190,80,.5)}
+/* narration */
+#narr{position:absolute;left:110px;width:1700px;top:960px;direction:rtl;display:flex;justify-content:center}
+.nl{position:absolute;width:1700px;display:flex;flex-wrap:wrap;justify-content:center;column-gap:.26em;row-gap:0;font-family:'IBM Plex Sans Arabic';font-weight:600;font-size:50px;line-height:1.45;color:#F3EBD8;text-shadow:0 4px 18px rgba(0,0,0,.75);transform:translateY(-50%)}
+.nl .w{display:inline-block}
+.nl .w.g{color:#F2C96A}
+/* cards */
+.card{position:absolute;direction:rtl;text-align:center;padding:40px 70px 34px;border-radius:26px;background:linear-gradient(180deg,rgba(13,40,48,.92),rgba(8,26,32,.92));
+  border:2px solid rgba(217,180,106,.85);box-shadow:0 0 0 8px rgba(217,180,106,.12),0 30px 80px rgba(0,0,0,.55),inset 0 0 60px rgba(217,180,106,.08);transform-origin:50% 50%}
+.card::before{content:'';position:absolute;inset:10px;border-radius:18px;border:1px solid rgba(217,180,106,.45)}
+.card .hd{font-family:'Reem Kufi';font-size:28px;color:#D9B46A;letter-spacing:1px;margin-bottom:10px}
+.card .tx{font-family:'Amiri';font-size:54px;line-height:1.6;color:#F7EBD0}
+.card .tx .q{color:#FFE3A3}
+.card .src{font-family:'Reem Kufi';font-size:27px;color:#D9B46A;margin-top:14px;opacity:.95}
+.card .orn{position:absolute;width:34px;height:34px;top:-17px}
+.lbl{position:absolute;font-family:'Reem Kufi';color:#F2D594;text-align:center;direction:rtl;transform:translate(-50%,-50%);white-space:nowrap;text-shadow:0 2px 14px rgba(0,0,0,.7)}
+#hud{position:absolute;left:54px;top:40px;display:flex;align-items:center;gap:16px;direction:rtl;padding:12px 26px 12px 18px;border-radius:999px;background:rgba(8,28,34,.72);border:1.5px solid rgba(217,180,106,.6)}
+#hud .n{font-family:'Reem Kufi';font-size:40px;color:#F7E1A6;line-height:1;min-width:150px;text-align:center}
+#hud .l{font-family:'IBM Plex Sans Arabic';font-size:20px;color:#CDB98C;line-height:1.1}
+.chat{position:absolute;direction:rtl;font-family:'IBM Plex Sans Arabic';font-weight:600;font-size:30px;padding:14px 26px;border-radius:26px;white-space:nowrap}
+</style>
+</head>
+<body>
+<div id="stage">
+ <svg class="full" id="bgsvg" viewBox="0 0 1920 1080">
+  <defs>
+   <pattern id="geo" width="200" height="200" patternUnits="userSpaceOnUse">
+    <g fill="none" stroke="#D9B46A" stroke-width="1.6">
+     <rect x="58" y="58" width="84" height="84"/><rect x="58" y="58" width="84" height="84" transform="rotate(45 100 100)"/>
+     <circle cx="100" cy="100" r="22"/>
+     <path d="M100 0 L100 41 M100 159 L100 200 M0 100 L41 100 M159 100 L200 100"/>
+     <path d="M0 0 L70 70 M200 0 L130 70 M0 200 L70 130 M200 200 L130 130"/>
+     <rect x="-42" y="-42" width="84" height="84" transform="rotate(45 0 0)"/><rect x="158" y="-42" width="84" height="84" transform="rotate(45 200 0)"/>
+     <rect x="-42" y="158" width="84" height="84" transform="rotate(45 0 200)"/><rect x="158" y="158" width="84" height="84" transform="rotate(45 200 200)"/>
+    </g>
+   </pattern>
+   <radialGradient id="patFade" cx="50%" cy="42%" r="70%"><stop offset="0" stop-color="#fff" stop-opacity="1"/><stop offset=".7" stop-color="#fff" stop-opacity=".35"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+   <mask id="patMask"><rect x="-200" y="-200" width="2320" height="1480" fill="url(#patFade)"/></mask>
+   <linearGradient id="gGold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE7A8"/><stop offset=".5" stop-color="#E3BA62"/><stop offset="1" stop-color="#A87A2C"/></linearGradient>
+   <linearGradient id="gSand" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F7D98F"/><stop offset="1" stop-color="#D49A3C"/></linearGradient>
+   <radialGradient id="rGlow"><stop offset="0" stop-color="#FFE9B0" stop-opacity=".85"/><stop offset=".45" stop-color="#E9B95A" stop-opacity=".25"/><stop offset="1" stop-color="#E9B95A" stop-opacity="0"/></radialGradient>
+   <radialGradient id="rTeal"><stop offset="0" stop-color="#6FE3D0" stop-opacity=".5"/><stop offset="1" stop-color="#6FE3D0" stop-opacity="0"/></radialGradient>
+   <linearGradient id="gSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0D2E3A"/><stop offset="1" stop-color="#1D4A52"/></linearGradient>
+   <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+   <filter id="soft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="18"/></filter>
+   <path id="star8" d="M0 -60 L17 -41 L42 -42 L41 -17 L60 0 L41 17 L42 42 L17 41 L0 60 L-17 41 L-42 42 L-41 17 L-60 0 L-41 -17 L-42 -42 L-17 -41 Z"/>
+  </defs>
+  <g id="patG" mask="url(#patMask)"><rect id="patR" x="-400" y="-400" width="2720" height="1880" fill="url(#geo)" opacity=".13"/></g>
+  <g id="bigRosette" opacity=".08" transform="translate(960 470)">
+   ${ROSETTE}
+  </g>
+ </svg>
+ <canvas id="beams" width="1920" height="1080"></canvas>
+ <div class="layer" id="scenes"></div>
+ <svg class="full" id="archSvg" viewBox="0 0 1920 1080">
+  <g id="arch" opacity="0">
+   <path id="archP1" d="M260 900 L260 430 C260 250 520 150 960 70 C1400 150 1660 250 1660 430 L1660 900 Z" fill="rgba(8,30,36,.55)" stroke="url(#gGold)" stroke-width="5"/>
+   <path id="archP2" d="M300 870 L300 440 C300 280 540 190 960 112 C1380 190 1620 280 1620 440 L1620 870 Z" fill="none" stroke="#D9B46A" stroke-width="1.6" opacity=".7"/>
+   <g transform="translate(960 70)"><use href="#star8" fill="none" stroke="url(#gGold)" stroke-width="4" transform="scale(.5)"/><circle r="9" fill="#F2D594"/></g>
+   <circle id="archGlow" cx="960" cy="480" r="520" fill="url(#rGlow)" opacity=".25"/>
+  </g>
+ </svg>
+ <div class="layer" id="verses"></div>
+ <div class="layer" id="ui">
+  <div id="hud"><svg width="44" height="58" viewBox="-22 -29 44 58"><path d="M-16 -26 H16 M-16 26 H16" stroke="#D9B46A" stroke-width="3.5" stroke-linecap="round"/><path d="M-13 -24 C-13 -6 -3 -4 -3 0 C-3 4 -13 6 -13 24 L13 24 C13 6 3 4 3 0 C3 -4 13 -6 13 -24 Z" fill="none" stroke="#D9B46A" stroke-width="2.5"/><path id="hudSandT" d="M-10 -20 L10 -20 L0 -3 Z" fill="#E8C373"/><path d="M-10 22 L10 22 L0 12 Z" fill="#E8C373"/></svg>
+   <div><div class="n" id="hudN">٨٦٤٠٠</div><div class="l">ثانية باقية في يومك</div></div></div>
+  <div id="narr"></div>
+ </div>
+ <div id="vig"></div>
+ <div id="fade"></div>
+</div>
+<script>
+const Q=${QURAN};
+// ================= utilities =================
+const W=1920,H=1080,DUR=167.0;
+const clamp=(v,a=0,b=1)=>Math.min(b,Math.max(a,v));
+const P=(t,a,d)=>clamp((t-a)/d);
+const lerp=(a,b,k)=>a+(b-a)*k;
+const E={out:k=>1-Math.pow(1-k,3),in:k=>k*k*k,inOut:k=>k<.5?4*k*k*k:1-Math.pow(-2*k+2,3)/2,sine:k=>-(Math.cos(Math.PI*k)-1)/2,
+ back:k=>{const c1=1.4,c3=c1+1;return k<=0?0:1+c3*Math.pow(k-1,3)+c1*Math.pow(k-1,2)}};
+const win=(t,a,b,fi=.6,fo=.6)=>Math.min(E.sine(P(t,a,fi)),1-E.sine(P(t,b-fo,fo)));
+const $=id=>document.getElementById(id);
+function T(el,x,y,s=1,r=0,o){if(typeof el==='string')el=$(el);if(!el)return;el.setAttribute('transform',`translate(${x.toFixed(2)} ${y.toFixed(2)}) rotate(${r.toFixed(2)}) scale(${Math.max(1e-4,s).toFixed(4)})`);if(o!==undefined)el.setAttribute('opacity',clamp(o).toFixed(3));}
+function O(el,o){if(typeof el==='string')el=$(el);if(el)el.setAttribute('opacity',clamp(o).toFixed(3));}
+function S(el,{x=0,y=0,s=1,o,blur}={}){if(typeof el==='string')el=$(el);el.style.transform=`translate(${x.toFixed(1)}px,${y.toFixed(1)}px) scale(${s.toFixed(4)})`;if(o!==undefined){el.style.opacity=clamp(o).toFixed(3);el.style.display=o<=0.001?'none':'';}if(blur!==undefined)el.style.filter=blur>0.05?`blur(${blur.toFixed(1)}px)`:'none';}
+const AR='٠١٢٣٤٥٦٧٨٩';const ar=n=>String(n).replace(/[0-9]/g,d=>AR[d]);
+function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+// original voice time -> extended timeline (silence inserted for the verses)
+const nt=t=>t+(t>22.1?7:0)+(t>42.7?6:0)+(t>78.1?10:0);
+const VERSE_WIN=[[22.1,29.1],[49.7,55.7],[91.1,101.1]]; // pure verse moments (no SFX, no other UI)
+
+// ================= narration (times in ORIGINAL voice seconds) =================
+// card:true -> spoken quote, shown in a card instead of the narration line
+const NARR=[
+ [[0.0,3.16,'عمرك لاحظت إن باقة النت بتخلص آخر الشهر...'],[3.16,7.44,'سواء استخدمتها في حاجة تنفعك، أو ضيّعتها في التقليب؟']],
+ [[7.44,9.52,'الوقت كده بالظبط...'],[9.52,13.06,'رأس مال بيخلص كل ثانية، ومابيرجعش.']],
+ [[14.14,16.72,'وفيه سورة من تلات آيات بس،'],[16.72,18.40,'قال عنها الإمام الشافعي:']],
+ [[22.5,24.32,'ربنا بيقسم بالعصر...'],[24.32,28.16,'والعصر، زي ما قال الإمام الطبري، هو الدهر.'],[28.16,29.48,'يعني الزمن نفسه.']],
+ [[30.22,33.36,'والشيخ السعدي بيوصف الليل والنهار'],[33.36,37.06,'إنهم «محل أفعال العباد وأعمالهم»...']],
+ [[37.06,40.04,'يعني يومك هو المحل اللي بتشتغل فيه،'],[40.04,42.16,'ورأس مالك فيه... وقتك.']],
+ [[43.06,45.1,'كل إنسان في خسارة...'],[45.1,47.82,'والسعدي بيقول إن الخسارة دي درجات،'],[47.82,50.12,'على قد ما الواحد ضيّع.']],
+ [[50.12,52.34,'زي صاحب محل فاتح من الصبح،'],[52.34,54.24,'ولا باع ولا اشترى...'],[54.24,57.66,'يقفل آخر اليوم، والإيجار اتدفع، واليوم راح.']],
+ [[58.72,61.2,'والنبي صلى الله عليه وسلم قال:']],
+ [[66.78,68.06,'رواه البخاري.']],
+ [[68.58,71.5,'والمغبون هو اللي باع حاجة غالية...'],[71.5,72.36,'بتمن رخيص.']],
+ [[73.32,75.26,'طب إيه طريق الربح؟'],[75.26,77.6,'السورة بتستثني... بأربع صفات.']],
+ [[78.6,80.16,'أولاً: الإيمان...'],[80.16,84.12,'وزي ما قال السعدي، الإيمان مايكونش من غير علم.'],[84.12,86.34,'تعرف ربنا، وتصدّق بقلبك.']],
+ [[86.86,89.34,'تانياً: العمل الصالح،'],[89.34,90.84,'وده كل خير...']],
+ [[90.84,93.66,'صلاتك في وقتها، وإتقانك لشغلك،'],[93.66,96.02,'وكلمة حلوة لأمك وانت راجع تعبان.']],
+ [[96.76,99.4,'تالتاً: التواصي بالحق...'],[99.4,101.96,'صاحبك اللي يقولك "يلا نلحق الصلاة"،'],[101.96,103.34,'وانت كمان تفكّره.']],
+ [[104.1,106.34,'ورابعاً: التواصي بالصبر...'],[106.34,110.7,'على طاعة ربنا، وعن معصيته، وعلى أقداره الصعبة.']],
+ [[110.7,114.72,'زي ما تثبّت صاحبك وهو بيدوّر على شغل، والأبواب مقفولة.']],
+ [[114.96,119.48,'والسعدي لاحظ إن أول اتنين بيكمّل بيهم الإنسان نفسه...'],[119.48,121.92,'وآخر اتنين بيكمّل بيهم غيره.']],
+ [[122.34,124.3,'يعني معادلة النجاح:'],[124.3,127.0,'إنك تنجح... وتاخد اللي حواليك معاك.']],
+ [[127.54,130.36,'واللي يكمّل الأربعة، زي ما قال السعدي:']],
+];
+const GOLD=['تنفعك،','ثانية،','ومابيرجعش.','الشافعي:','الطبري،','الدهر.','السعدي','«محل','وقتك.','خسارة...','درجات،','غالية...','رخيص.','الربح؟','بأربع','الإيمان...','علم.','الصالح،','خير...','بالحق...','بالصبر...','نفسه...','غيره.','النجاح:','معاك.','الأربعة،'];
+const narrRoot=$('narr');const NL=[];
+NARR.forEach(parts=>{const el=document.createElement('div');el.className='nl';narrRoot.appendChild(el);const L={el,words:[],start:nt(parts[0][0]),end:nt(parts[parts.length-1][1])};
+ parts.forEach(([s,e,txt])=>{s=nt(s);e=nt(e);const ws=txt.split(' ');const wts=ws.map(w=>w.replace(/[.،؟!:«»"]/g,'').length+1.6);const tot=wts.reduce((a,b)=>a+b,0);let c=0;
+  ws.forEach((w,j)=>{const sp=document.createElement('span');sp.className='w'+(GOLD.includes(w)?' g':'');sp.textContent=w;el.appendChild(sp);L.words.push({el:sp,t:s+(e-s)*0.92*c/tot-0.08});c+=wts[j];});});
+ NL.push(L);});
+NL.forEach((L,i)=>{const nx=NL[i+1];L.exit=Math.min(L.end+0.9,nx?nx.start-0.1:L.end+1.2);});
+function updateNarr(t){NL.forEach(L=>{const vis=t>=L.start-0.15&&t<L.exit;if(!vis){L.el.style.display='none';return;}L.el.style.display='flex';
+  const x=P(t,L.exit-0.35,0.35);L.el.style.opacity=(1-x).toFixed(3);L.el.style.transform=`translateY(calc(-50% + ${(-14*x).toFixed(1)}px))`;
+  L.words.forEach(w=>{const k=P(t,w.t,0.55),ke=E.out(k);w.el.style.opacity=ke.toFixed(3);w.el.style.transform=`translateY(${((1-ke)*14).toFixed(1)}px)`;w.el.style.filter=k<1?`blur(${((1-ke)*8).toFixed(1)}px)`:'none';});});}
+
+// ================= quote / tafsir cards =================
+const UI=$('ui');
+const ORN=`<svg class="orn" viewBox="-60 -60 120 120"><use href="#star8" fill="#0B2A31" stroke="#D9B46A" stroke-width="7"/><circle r="12" fill="#D9B46A"/></svg>`;
+function card(id,{hd='',tx,src='',x=960,y=520,w=1300,size=54}){const d=document.createElement('div');d.className='card';d.id=id;d.style.width=w+'px';d.style.left=(x-w/2)+'px';d.style.top=y+'px';
+ d.innerHTML=`${ORN.replace('class="orn"','class="orn" style="right:46%"')}${hd?`<div class="hd">${hd}</div>`:''}<div class="tx" style="font-size:${size}px">${tx}</div>${src?`<div class="src">${src}</div>`:''}`;UI.insertBefore(d,narrRoot);return d;}
+// every card: [id, opts, inTime(original sec), outTime(original sec)]
+const CARDS=[
+ ['c_shafii',{hd:'قال الإمام الشافعي',tx:'<span class="q">«لو تدبّر الناسُ هذه السورةَ لوسِعَتْهم»</span>',src:'ذكره الحافظ ابن كثير في تفسيره',y:470,w:1240},18.45,22.0],
+ ['c_tabari',{hd:'الإمام الطبري',tx:'<span class="q">«والعصرُ اسمٌ للدهر»</span>',src:'جامع البيان في تأويل القرآن',y:420,w:980,size:60},25.4,30.1],
+ ['c_saadi1',{hd:'الشيخ السعدي',tx:'«أقسم تعالى بالعصر، الذي هو الليل والنهار، <span class="q">محلّ أفعال العباد وأعمالهم</span>»',src:'تيسير الكريم الرحمن',y:400,w:1400,size:48},30.4,37.0],
+ ['c_saadi2',{hd:'الشيخ السعدي',tx:'«والخسار <span class="q">مراتب متعددة متفاوتة</span>»',src:'تيسير الكريم الرحمن',y:420,w:1060,size:56},45.5,50.0],
+ ['c_hadith',{hd:'قال رسول الله صلى الله عليه وسلم',tx:'<span class="q">«نِعْمَتَانِ مَغْبُونٌ فِيهِمَا كَثِيرٌ مِنَ النَّاسِ: الصِّحَّةُ وَالفَرَاغُ»</span>',src:'رواه البخاري (٦٤١٢) عن ابن عباس رضي الله عنهما',y:330,w:1500,size:56},59.4,68.3],
+ ['c_q1',{hd:'السعدي',tx:'«ولا يكون الإيمان <span class="q">بدون العلم</span>»',x:960,y:640,w:900,size:44},81.0,86.5],
+ ['c_q2',{hd:'السعدي',tx:'«وهذا <span class="q">شامل لأفعال الخير كلها</span>، الظاهرة والباطنة»',x:960,y:640,w:1150,size:42},88.6,90.9],
+ ['c_q3',{hd:'السعدي',tx:'«أي: <span class="q">يوصي بعضهم بعضًا</span> بذلك، ويحثّه عليه، ويرغّبه فيه»',x:960,y:640,w:1250,size:42},97.6,99.6],
+ ['c_q4',{hd:'السعدي',tx:'«على طاعة الله، وعن معصية الله، وعلى أقدار الله المؤلمة»',x:960,y:640,w:1350,size:42},106.3,110.8],
+ ['c_self',{hd:'السعدي',tx:'«فالأمران الأولان <span class="q">يكمّل بهما الإنسان نفسه</span>، والأمران الأخيران <span class="q">يكمّل بهما غيره</span>»',x:960,y:110,w:1500,size:40},115.0,122.1],
+ ['c_final',{hd:'الشيخ السعدي',tx:'«وبتكميل الأمور الأربعة، يكون الإنسان قد <span class="q">سلم من الخسار، وفاز بالربح العظيم</span>»',src:'تيسير الكريم الرحمن',y:400,w:1450,size:54},129.6,133.7+0.0],
+];
+CARDS.forEach(c=>{c.el=card(c[0],c[1]);c.a=nt(c[2]);c.b=nt(c[3]);});
+// final card stays until the end-card starts
+CARDS.find(c=>c[0]==='c_final').b=156.4;
+function updateCards(t){CARDS.forEach(c=>{const v=win(t,c.a,c.b,0.7,0.6);if(v<=0.001){c.el.style.display='none';return;}c.el.style.display='block';
+  c.el.style.opacity=v.toFixed(3);c.el.style.transform=`translateY(${((1-v)*18).toFixed(1)}px) scale(${lerp(.97,1,v).toFixed(4)})`;c.el.style.filter=v<0.99?`blur(${((1-v)*6).toFixed(1)}px)`:'none';});}
+
+// ================= verses (exact KFGQPC text) =================
+const VR=$('verses');
+function verseEl(id,html,size,y){const d=document.createElement('div');d.className='verse';d.id=id;d.style.fontSize=size+'px';d.style.top=(y-size*0.95)+'px';d.innerHTML=html;VR.appendChild(d);return d;}
+const mark=n=>'۝'+ar(n);
+const v3w=Q.ayat[2].split(' ');const v3groups=[[0,1],[2],[3,4],[5,6],[7,8]];
+const V3HTML=v3groups.map((g,i)=>`<span class="ph" id="v3p${i}">${g.map(k=>v3w[k]).join(' ')}</span>`).join(' ')+' '+mark(3);
+const VB=verseEl('vBas',Q.basmala,96,470);
+const V1=verseEl('v1',Q.ayat[0]+' '+mark(1),170,500);
+const V2=verseEl('v2',Q.ayat[1]+' '+mark(2),128,500);
+const V3=verseEl('v3',V3HTML,76,500);
+const VEND=verseEl('vEnd',`<div style="font-size:64px;line-height:1.7">${Q.basmala}</div><div>${Q.ayat[0]} ${mark(1)} ${Q.ayat[1]} ${mark(2)}</div><div>${Q.ayat[2]} ${mark(3)}</div>`,58,430);
+VEND.style.whiteSpace='normal';VEND.style.lineHeight='2.0';
+function reveal(el,k){const p=(k*118-9).toFixed(1);const m=`linear-gradient(to left, #000 0%, #000 ${p}%, transparent ${(+p+9).toFixed(1)}%)`;el.style.webkitMaskImage=m;el.style.maskImage=m;}
+// verse timeline: [el, writeStart, writeDur, dockAt, hideAt, dockY, dockScale]
+const VT=[
+ {el:VB,w:22.55,wd:1.6,dock:null,hide:25.05,hideD:0.5},
+ {el:V1,w:25.35,wd:1.3,dock:28.6,hide:49.55,dockY:-372,dockS:.42},
+ {el:V2,w:50.0,wd:1.8,dock:55.2,hide:90.85,dockY:-375,dockS:.44},
+ {el:V3,w:91.45,wd:3.4,dock:100.6,hide:150.0,dockY:-385,dockS:.62},
+ {el:VEND,w:157.0,wd:4.2,dock:null,hide:999},
+];
+function updateVerses(t){
+  VT.forEach(v=>{const a=v.w-0.2;if(t<a||t>v.hide+(v.hideD||0.8)){v.el.style.display='none';return;}v.el.style.display='block';
+   reveal(v.el,E.inOut(P(t,v.w,v.wd)));
+   let y=0,s=1;if(v.dock){const k=E.inOut(P(t,v.dock,1.0));y=lerp(0,v.dockY,k);s=lerp(1,v.dockS,k);}
+   const ho=1-E.sine(P(t,v.hide,v.hideD||0.8));
+   v.el.style.opacity=ho.toFixed(3);v.el.style.transform=`translateY(${y.toFixed(1)}px) scale(${s.toFixed(4)})`;});
+  // highlight the four qualities in verse 3: first in the silent moment, then while each is explained
+  const hl=[[96.2,100.4],[96.9,100.4],[97.6,100.4],[98.3,100.4]];
+  const act=[[nt(78.6),nt(86.4)],[nt(86.86),nt(96.1)],[nt(96.76),nt(103.4)],[nt(104.1),nt(114.8)]];
+  for(let i=0;i<4;i++){const on=(t>=hl[i][0]&&t<hl[i][1])||(t>=act[i][0]&&t<act[i][1])||(t>=nt(122.34)&&t<150);$('v3p'+(i+1)).classList.toggle('on',on);}
+  // arch frame visible during verse moments and the end card
+  const ar_=Math.max(win(t,22.15,29.2,0.9,0.8),win(t,49.75,55.8,0.9,0.8),win(t,91.15,101.2,0.9,0.8),win(t,156.8,170,1.2,0.8));
+  O('arch',ar_);const dl=4200;['archP1','archP2'].forEach((id,j)=>{const p=$(id);p.setAttribute('stroke-dasharray',dl);p.setAttribute('stroke-dashoffset',(dl*(1-E.out(clamp(ar_*1.6)))).toFixed(0));});
+  O('archGlow',0.18+0.12*Math.sin(t*1.3));
+}
+
+// ================= icons (gold line art, no faces) =================
+const st='fill="none" stroke="#E2BE6E" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"';
+const ICON={
+ lamp:`<g ${st}><path d="M0 -70 V-50"/><path d="M-26 -50 H26 L34 -30 H-34 Z"/><path d="M-30 -30 C-40 10 -26 40 0 50 C26 40 40 10 30 -30"/><path d="M-14 50 H14 L8 64 H-8 Z"/></g><circle cy="5" r="16" fill="#FFE2A0" filter="url(#glow)"/>`,
+ book:`<g ${st}><path d="M0 -34 C-20 -46 -50 -44 -62 -36 V40 C-50 32 -20 30 0 42 C20 30 50 32 62 40 V-36 C50 -44 20 -46 0 -34 Z"/><path d="M0 -34 V42"/><path d="M-48 -18 H-14 M-48 0 H-14 M14 -18 H48 M14 0 H48"/></g>`,
+ tree:`<g ${st}><path d="M0 60 V-10"/><path d="M0 10 C-30 0 -40 -20 -36 -40 C-14 -40 0 -24 0 -4"/><path d="M0 -6 C26 -14 40 -36 34 -58 C10 -56 -2 -36 0 -14"/><path d="M-40 60 H40"/></g>`,
+ talk:`<g ${st}><path d="M-60 -40 H6 A12 12 0 0 1 18 -28 V2 A12 12 0 0 1 6 14 H-30 L-46 30 V14 H-60 A12 12 0 0 1 -72 2 V-28 A12 12 0 0 1 -60 -40 Z"/><path d="M60 -6 H28 V22 A12 12 0 0 0 40 34 H48 V50 L64 34 H70 A12 12 0 0 0 82 22 V6 A12 12 0 0 0 70 -6 Z" transform="translate(-14 0)"/></g>`,
+ mountain:`<g ${st}><path d="M-70 50 L-20 -30 L0 0 L24 -46 L76 50 Z"/><path d="M24 -46 L12 -22 L24 -26 L34 -20"/></g><circle cx="-40" cy="-46" r="12" fill="#FFE2A0" filter="url(#glow)"/>`,
+ mosqueClock:`<g ${st}><path d="M-50 50 V0 C-50 -30 -20 -50 0 -64 C20 -50 50 -30 50 0 V50 Z"/><path d="M0 -64 V-80"/><circle cy="10" r="20"/><path d="M0 10 V-2 M0 10 L9 15"/></g>`,
+ gear:`<g ${st}><circle r="20"/><path d="M0 -52 V-36 M0 36 V52 M-52 0 H-36 M36 0 H52 M-37 -37 L-26 -26 M26 26 L37 37 M37 -37 L26 -26 M-26 26 L-37 37"/><circle r="38"/></g>`,
+ flower:`<g ${st}><circle r="12" fill="#FFE2A0"/>${[0,1,2,3,4,5].map(i=>`<ellipse cx="0" cy="-30" rx="14" ry="22" transform="rotate(${i*60})"/>`).join('')}<path d="M0 44 V80"/></g>`,
+ hourglass:`<g ${st}><path d="M-40 -70 H40 M-40 70 H40"/><path d="M-32 -66 C-32 -20 -8 -10 -8 0 C-8 10 -32 20 -32 66 H32 C32 20 8 10 8 0 C8 -10 32 -20 32 -66 Z"/></g>`,
+};
+function medal(id,icon,label,num){return `<g id="${id}"><circle id="${id}_g" r="150" fill="url(#rGlow)" opacity="0"/><use href="#star8" transform="scale(1.75)" fill="#0B2830" stroke="#D9B46A" stroke-width="3.2"/><use href="#star8" transform="scale(1.45) rotate(22.5)" fill="none" stroke="#D9B46A" stroke-width="1.6" opacity=".6"/>
+ <g id="${id}_i" opacity=".15">${icon}</g>${num?`<g transform="translate(0 -128)"><circle r="22" fill="#D9B46A"/><text y="11" text-anchor="middle" font-family="Reem Kufi" font-size="30" fill="#0B2830">${ar(num)}</text></g>`:''}
+ <text id="${id}_t" y="150" text-anchor="middle" font-family="Reem Kufi" font-size="38" fill="#F2D594" opacity="0">${label}</text></g>`;}
+
+// ================= scenes =================
+const SC=[];const scRoot=$('scenes');
+function scene(s,e,html,update){const d=document.createElement('div');d.className='scene';d.innerHTML=html;scRoot.appendChild(d);SC.push({s,e,el:d,update});}
+const sand=(id,n,seed)=>{const r=rng(seed);return `<g id="${id}">${[...Array(n)].map((_,i)=>`<circle id="${id}${i}" r="${(1.6+r()*2.2).toFixed(1)}" fill="#F2CF84" data-p="${r().toFixed(3)}" data-x="${(r()-.5).toFixed(3)}"/>`).join('')}</g>`;};
+function updSand(id,n,t,x,y0,y1,rate=1,spread=6){for(let i=0;i<n;i++){const el=$(id+i);if(!el)return;const p=parseFloat(el.dataset.p),dx=parseFloat(el.dataset.x);const k=((t*rate*0.9+p)%1);el.setAttribute('cx',(x+dx*spread*k).toFixed(1));el.setAttribute('cy',(y0+(y1-y0)*k*k).toFixed(1));el.setAttribute('opacity',(k<0.95?1:0).toFixed(2));}}
+function hourglassSVG(id){return `<g id="${id}"><circle r="330" fill="url(#rGlow)" opacity=".35"/>
+ <rect x="-170" y="-300" width="340" height="30" rx="12" fill="url(#gGold)"/><rect x="-170" y="270" width="340" height="30" rx="12" fill="url(#gGold)"/>
+ <rect x="-160" y="-270" width="14" height="540" rx="7" fill="#C9A45A"/><rect x="146" y="-270" width="14" height="540" rx="7" fill="#C9A45A"/>
+ <clipPath id="${id}_ct"><path d="M-120 -262 L120 -262 C120 -110 22 -40 10 0 L-10 0 C-22 -40 -120 -110 -120 -262 Z"/></clipPath>
+ <clipPath id="${id}_cb"><path d="M-10 0 L10 0 C22 40 120 110 120 262 L-120 262 C-120 110 -22 40 -10 0 Z"/></clipPath>
+ <rect id="${id}_st" x="-130" y="-200" width="260" height="210" fill="url(#gSand)" clip-path="url(#${id}_ct)"/>
+ <path id="${id}_sb" d="M-120 262 L120 262 L120 262 L-120 262 Z" fill="url(#gSand)" clip-path="url(#${id}_cb)"/>
+ <path d="M-120 -262 L120 -262 C120 -110 22 -40 10 0 C22 40 120 110 120 262 L-120 262 C-120 110 -22 40 -10 0 C-22 -40 -120 -110 -120 -262 Z" fill="rgba(200,240,255,.06)" stroke="#E9D4A0" stroke-width="4"/>
+ <path d="M-96 -240 C-96 -150 -50 -90 -24 -60" stroke="#fff" stroke-width="6" opacity=".25" fill="none" stroke-linecap="round"/>
+ <rect id="${id}_stream" x="-2.5" y="0" width="5" height="250" fill="#F2CF84"/>${sand(id+'_g',26,7)}</g>`;}
+function updHourglass(id,t,level){// level 0..1 top sand remaining
+ const top=$(id+'_st');const h=200*level;top.setAttribute('y',(10-h).toFixed(1));top.setAttribute('height',h.toFixed(1));
+ const bh=Math.max(0,1-level)*190+20;$(id+'_sb').setAttribute('d',`M-120 262 L120 262 L120 ${262-bh*0.55} C60 ${262-bh*0.75} 20 ${262-bh} 0 ${262-bh} C-20 ${262-bh} -60 ${262-bh*0.75} -120 ${262-bh*0.55} Z`);
+ $(id+'_stream').setAttribute('height',(262-bh).toFixed(1));updSand(id+'_g',26,t,0,2,262-bh,1.3,8);}
+function skyline(){return `<g id="sky_city" fill="#082028">
+ <rect x="-100" y="760" width="2120" height="400"/>
+ ${[[140,640,90],[260,600,60],[420,560,110],[620,620,80],[1240,600,90],[1420,560,120],[1620,630,70],[1760,600,100]].map(([x,y,w])=>`<rect x="${x}" y="${y}" width="${w}" height="${800-y}"/>`).join('')}
+ <path d="M820 760 V600 C820 520 880 480 960 470 C1040 480 1100 520 1100 600 V760 Z"/><rect x="954" y="420" width="12" height="52"/><circle cx="960" cy="414" r="9"/>
+ <rect x="740" y="460" width="34" height="300"/><path d="M736 460 L757 400 L778 460 Z"/><rect x="1146" y="440" width="34" height="320"/><path d="M1142 440 L1163 376 L1184 440 Z"/>
+ <rect x="520" y="520" width="26" height="240"/><path d="M516 520 L533 470 L550 520 Z"/>
+ <path d="M440 560 C440 520 470 500 500 496 C530 500 560 520 560 560 Z"/>
+ </g><path d="M-100 820 C400 800 800 840 1200 815 C1500 800 1800 820 2020 810 L2020 1180 L-100 1180 Z" fill="#0A2A33" opacity=".9"/>
+ <path d="M-100 840 C400 825 800 860 1200 838 C1500 826 1800 842 2020 834" stroke="#3E8E96" stroke-width="3" fill="none" opacity=".4"/>`;}
+
+// ---- SC-H: the data package & the hourglass (0 - 14.1)
+scene(0,14.2,`<svg class="full" viewBox="0 0 1920 1080">
+ <g id="h_phone"><rect x="-190" y="-340" width="380" height="680" rx="54" fill="#0B242C" stroke="#D9B46A" stroke-width="4"/><rect x="-166" y="-312" width="332" height="624" rx="36" fill="#0F3039"/>
+  <text x="0" y="-210" text-anchor="middle" font-family="Reem Kufi" font-size="42" fill="#F2D594">باقة النت</text>
+  <circle r="120" cx="0" cy="-30" fill="none" stroke="#1F4A52" stroke-width="22"/>
+  <circle id="h_ring" r="120" cx="0" cy="-30" fill="none" stroke="#E7C06A" stroke-width="22" stroke-linecap="round" transform="rotate(-90 0 -30)" stroke-dasharray="754" stroke-dashoffset="0"/>
+  <text id="h_pct" x="0" y="-12" text-anchor="middle" font-family="Reem Kufi" font-size="60" fill="#F7E6B5">١٠٠٪</text>
+  <g id="h_cal" transform="translate(0 200)"><rect x="-70" y="-60" width="140" height="120" rx="14" fill="#F2E6C8"/><rect x="-70" y="-60" width="140" height="34" rx="12" fill="#B5523B"/><text y="40" text-anchor="middle" font-family="Reem Kufi" font-size="54" fill="#0B2830">٣٠</text></g>
+  <g id="h_feed"><clipPath id="h_fc"><rect x="-150" y="100" width="300" height="200" rx="16"/></clipPath><g clip-path="url(#h_fc)"><g id="h_feedIn">${[...Array(10)].map((_,i)=>`<rect x="-140" y="${110+i*72}" width="280" height="58" rx="12" fill="${i%2?'#25525A':'#1D454D'}"/>`).join('')}</g></g></g>
+ </g>
+ <g id="h_good"><circle r="60" fill="#0B2830" stroke="#6FC7B6" stroke-width="3"/><g transform="scale(.6)">${ICON.book}</g></g>
+ <g id="h_bad"><circle r="60" fill="#0B2830" stroke="#8C6E64" stroke-width="3"/><path d="M-26 -20 H26 M-26 0 H26 M-26 20 H26" stroke="#8C6E64" stroke-width="6" stroke-linecap="round"/></g>
+ <g id="h_dust">${[...Array(40)].map((_,i)=>`<circle id="h_d${i}" r="3" fill="#F2CF84" opacity="0"/>`).join('')}</g>
+ ${hourglassSVG('h_hg')}
+ <g id="h_back"><path d="M40 0 A40 40 0 1 0 0 40" fill="none" stroke="#E2BE6E" stroke-width="6" stroke-linecap="round"/><path d="M-10 30 L0 42 L-14 50" fill="none" stroke="#E2BE6E" stroke-width="6" stroke-linecap="round"/><path d="M-50 -50 L50 50" stroke="#B5523B" stroke-width="8" stroke-linecap="round"/></g>
+</svg>`,(t)=>{
+  const kp=E.out(P(t,0.1,0.9)),morph=E.inOut(P(t,7.2,1.1));
+  T('h_phone',960,500+(1-kp)*40,lerp(1,0.6,morph),0,kp*(1-morph));
+  const used=E.inOut(P(t,0.4,6.6));$('h_ring').setAttribute('stroke-dashoffset',(754*used).toFixed(1));$('h_pct').textContent=ar(Math.round(100*(1-used)))+'٪';
+  const kc=E.back(P(t,2.45,0.6));T('h_cal',0,200+lerp(30,0,kc),1,0,kc*(1-E.inOut(P(t,5.9,0.4))));
+  const kf=E.out(P(t,5.95,0.4));O('h_feed',kf);$('h_feedIn').setAttribute('transform',`translate(0 ${(-((Math.max(0,t-6.0))*260)%360).toFixed(1)})`);
+  const kg=E.back(P(t,3.6,0.6))*(1-E.inOut(P(t,7.0,0.5))),kb=E.back(P(t,6.0,0.6))*(1-E.inOut(P(t,7.0,0.5)));
+  T('h_good',1360,420,kg,0,kg);T('h_bad',560,420,kb,0,kb);
+  for(let i=0;i<40;i++){const a=i*0.157*4,k=P(t,7.25+(i%10)*0.03,1.1);const r0=220*(1-k),x=960+Math.cos(a)*r0*(1.2-k),y=520+Math.sin(a)*r0;const d=$('h_d'+i);d.setAttribute('cx',x.toFixed(1));d.setAttribute('cy',y.toFixed(1));d.setAttribute('opacity',(k>0&&k<1?Math.sin(Math.PI*k):0).toFixed(2));}
+  const kh=E.out(P(t,7.9,1.0));T('h_hg',960,470,0.82*lerp(0.85,1,kh),0,kh);updHourglass('h_hg',t,lerp(0.98,0.7,P(t,7.9,6)));
+  const kr=E.back(P(t,12.35,0.5))*(1-E.sine(P(t,13.6,0.5)));T('h_back',1290,470,kr*1.1,0,kr);
+});
+
+// ---- SC-Q: three verses & al-Shafi'i (14.1 - 22.1)
+scene(14.1,22.25,`<svg class="full" viewBox="0 0 1920 1080">
+ <text id="q_title" x="960" y="270" text-anchor="middle" font-family="Reem Kufi" font-size="96" fill="url(#gGold)" filter="url(#glow)">سورة العصر</text>
+ ${[0,1,2].map(i=>`<g id="q_m${i}"><use href="#star8" transform="scale(1.1)" fill="#0B2830" stroke="#D9B46A" stroke-width="4"/><text y="22" text-anchor="middle" font-family="KFGQPC Hafs" font-size="64" fill="#F7E6B5">${'۝'+ar(i+1)}</text></g>`).join('')}
+</svg>`,(t)=>{
+  const kt=E.out(P(t,14.3,1.0))*(1-E.sine(P(t,18.2,0.5)));O('q_title',kt);$('q_title').setAttribute('transform',`translate(0 ${((1-kt)*20).toFixed(1)})`);
+  const xs=[1180,960,740];for(let i=0;i<3;i++){const k=E.back(P(t,15.05+i*0.22,0.6))*(1-E.sine(P(t,18.2,0.5)));T('q_m'+i,xs[i],520,k,0,k);}
+});
+
+// ---- SC-T1: time, al-Tabari, al-Sa'di (29.1 - 49.7)
+scene(29.0,49.8,`<svg class="full" viewBox="0 0 1920 1080">
+ <g id="t1_skyW"><rect x="-100" y="-100" width="2120" height="1300" fill="url(#gSky)" opacity=".0" id="t1_sky"/>
+  <g id="t1_sun"><circle r="120" fill="url(#rGlow)"/><circle r="46" fill="#FFE2A0"/></g>
+  <g id="t1_moon"><circle r="38" fill="#EFE4C6"/><circle cx="16" cy="-12" r="34" fill="#0D2E3A"/></g>
+  ${skyline()}</g>
+ <path id="t1_arc" d="M260 760 C500 330 1420 330 1660 760" fill="none" stroke="#D9B46A" stroke-width="3" stroke-dasharray="10 14" opacity="0"/>
+ ${[['mosqueClock',400,560],['gear',700,430],['book',1000,400],['flower',1300,440],['hourglass',1560,580]].map(([k,x,y],i)=>`<g id="t1_i${i}" transform="translate(${x} ${y})" opacity="0"><circle r="64" fill="#0B2830" stroke="#D9B46A" stroke-width="2.5"/><g transform="scale(.62)">${ICON[k]}</g></g>`).join('')}
+ <g id="t1_hg">${hourglassSVG('t1_h')}</g>
+ <text id="t1_word" x="960" y="540" text-anchor="middle" font-family="Reem Kufi" font-size="120" fill="url(#gGold)" filter="url(#glow)" opacity="0">وقتك</text>
+</svg>`,(t)=>{
+  const kc=E.out(P(t,29.3,1.2))*(1-E.sine(P(t,47.0,0.8)));O('t1_skyW',kc);
+  // days rolling by: sun & moon cycle quickly for "الدهر"
+  const sp=t<36.5?0.55:0.18;const cyc=(t-29.3)*sp;
+  const a=Math.PI*(1-((cyc)%1));T('t1_sun',960+Math.cos(a)*760,770-Math.sin(a)*420,1,0,Math.sin(Math.PI*((cyc)%1))>0.05?1:0);
+  const b=Math.PI*(1-((cyc+0.5)%1));T('t1_moon',960+Math.cos(b)*760,770-Math.sin(b)*400,1,0,0.8*(Math.sin(Math.PI*((cyc+0.5)%1))>0.05?1:0));
+  O('t1_sky',0.5+0.5*Math.sin(Math.PI*((cyc)%1)));
+  // "يومك هو المحل": activities along the day arc
+  const ka=E.out(P(t,44.0,0.8))*(1-E.sine(P(t,47.0,0.6)));O('t1_arc',ka*0.8);
+  for(let i=0;i<5;i++){const k=E.back(P(t,44.3+i*0.4,0.5))*(1-E.sine(P(t,47.0,0.6)));const el=$('t1_i'+i);const [x,y]=[[400,560],[700,430],[1000,400],[1300,440],[1560,580]][i];el.setAttribute('transform',`translate(${x} ${y+(1-k)*30}) scale(${Math.max(0.01,k)})`);O(el,k);}
+  // "ورأس مالك فيه... وقتك"
+  const kh=E.out(P(t,47.1,0.9))*(1-E.sine(P(t,49.0,0.6)));T('t1_hg',960,470,0.72,0,kh);updHourglass('t1_h',t,0.62);
+  const kw=E.out(P(t,48.5,0.6))*(1-E.sine(P(t,49.2,0.4)));O('t1_word',kw*0.0);
+});
+
+// ---- SC-T2: loss, degrees, the shop (55.7 - 70.7)
+scene(55.6,70.8,`<svg class="full" viewBox="0 0 1920 1080">
+ <g id="t2_scale" transform="translate(960 560)"><rect x="-8" y="-200" width="16" height="330" rx="8" fill="url(#gGold)"/><rect x="-90" y="120" width="180" height="26" rx="10" fill="url(#gGold)"/><circle cy="-200" r="16" fill="#F2D594"/>
+  <g id="t2_beam"><rect x="-300" y="-206" width="600" height="12" rx="6" fill="url(#gGold)"/>
+   <g id="t2_pr"><path d="M300 -200 L250 -60 M300 -200 L350 -60" stroke="#D9B46A" stroke-width="3"/><path d="M230 -60 H370 C370 -20 230 -20 230 -60 Z" fill="#0B2830" stroke="#D9B46A" stroke-width="3"/><text x="300" y="20" text-anchor="middle" font-family="Reem Kufi" font-size="40" fill="#E58C6E">خُسر</text></g>
+   <g id="t2_pl"><path d="M-300 -200 L-350 -60 M-300 -200 L-250 -60" stroke="#D9B46A" stroke-width="3"/><path d="M-370 -60 H-230 C-230 -20 -370 -20 -370 -60 Z" fill="#0B2830" stroke="#D9B46A" stroke-width="3"/><text x="-300" y="20" text-anchor="middle" font-family="Reem Kufi" font-size="40" fill="#8FD9C8">ربح</text></g></g></g>
+ <g id="t2_steps">${[0,1,2].map(i=>`<g id="t2_s${i}"><rect x="${-260+i*180}" y="${-40-i*70}" width="150" height="${80+i*70}" rx="12" fill="rgba(181,82,59,${.25+i*.18})" stroke="#E58C6E" stroke-width="2"/></g>`).join('')}</g>
+ <g id="t2_shop" transform="translate(960 560)">
+  <rect x="-420" y="-260" width="840" height="470" rx="10" fill="#0E2C34" stroke="#D9B46A" stroke-width="3"/>
+  <rect x="-440" y="-320" width="880" height="80" rx="10" fill="#14404A" stroke="#D9B46A" stroke-width="3"/><text x="0" y="-266" text-anchor="middle" font-family="Reem Kufi" font-size="46" fill="#F2D594">محل</text>
+  <rect x="-370" y="-210" width="740" height="420" fill="#163C45"/><rect x="-330" y="60" width="660" height="30" fill="#2A5B63"/>
+  <g id="t2_clk" transform="translate(240 -110)"><circle r="56" fill="#F2E6C8" stroke="#D9B46A" stroke-width="5"/><rect id="t2_ch" x="-4" y="-44" width="8" height="48" rx="4" fill="#0B2830"/><rect id="t2_cm" x="-3" y="-30" width="6" height="34" rx="3" fill="#0B2830"/></g>
+  <g id="t2_bill" transform="translate(-200 -60)"><rect x="-90" y="-110" width="180" height="220" rx="8" fill="#F2E6C8"/><text y="-60" text-anchor="middle" font-family="Reem Kufi" font-size="36" fill="#0B2830">الإيجار</text><path d="M-60 -20 H60 M-60 10 H40 M-60 40 H60" stroke="#9A8A6A" stroke-width="6" stroke-linecap="round"/><g id="t2_stamp" transform="translate(30 70) rotate(-12)"><rect x="-70" y="-26" width="140" height="52" rx="8" fill="none" stroke="#B5523B" stroke-width="5"/><text y="12" text-anchor="middle" font-family="Reem Kufi" font-size="30" fill="#B5523B">مدفوع</text></g></g>
+  <clipPath id="t2_shc"><rect x="-372" y="-212" width="744" height="424"/></clipPath>
+  <g clip-path="url(#t2_shc)"><g id="t2_shutter">${[...Array(16)].map((_,i)=>`<rect x="-372" y="${-212-424+i*27}" width="744" height="25" fill="#3A5A60" stroke="#284449" stroke-width="2"/>`).join('')}</g></g>
+ </g>
+ <g id="t2_cal" transform="translate(1560 300)"><rect x="-80" y="-70" width="160" height="140" rx="14" fill="#F2E6C8"/><rect x="-80" y="-70" width="160" height="38" rx="12" fill="#B5523B"/><text y="44" text-anchor="middle" font-family="Reem Kufi" font-size="60" fill="#0B2830">١</text></g>
+</svg>`,(t)=>{
+  const ks=E.out(P(t,55.9,0.9))*(1-E.sine(P(t,62.6,0.6)));const tilt=lerp(0,14,E.inOut(P(t,56.4,1.2)))+Math.sin(t*1.6)*0.8;
+  T('t2_scale',960,lerp(600,560,ks),lerp(.9,1,ks),0,ks*(t<58.4?1:lerp(1,0.35,E.inOut(P(t,58.4,0.6)))));
+  $('t2_beam').setAttribute('transform',`rotate(${tilt})`);
+  $('t2_pr').setAttribute('transform',`rotate(${-tilt} 300 -200)`);$('t2_pl').setAttribute('transform',`rotate(${-tilt} -300 -200)`);
+  // degrees of loss
+  for(let i=0;i<3;i++){const k=E.back(P(t,59.4+i*0.35,0.5))*(1-E.sine(P(t,62.6,0.5)));T('t2_s'+i,960,780,1,0,k);$('t2_s'+i).setAttribute('transform',`translate(1000 ${(780+(1-k)*40).toFixed(1)})`);}
+  // the shop
+  const kshop=E.out(P(t,63.0,0.9));T('t2_shop',960,lerp(600,560,kshop),lerp(.92,1,kshop)*0.9,0,kshop);
+  const spin=Math.max(0,t-63.2)*(t<67.4?260:60);$('t2_ch').setAttribute('transform',`rotate(${spin.toFixed(1)})`);$('t2_cm').setAttribute('transform',`rotate(${(spin/12).toFixed(1)})`);
+  const kbill=E.out(P(t,68.0,0.6));$('t2_bill').setAttribute('transform',`translate(-200 ${(-60+(1-kbill)*500).toFixed(1)})`);O('t2_bill',kbill);
+  const kst=P(t,69.1,0.3);$('t2_stamp').setAttribute('transform',`translate(30 70) rotate(-12) scale(${lerp(2,1,E.out(kst)).toFixed(3)})`);O('t2_stamp',kst>0?1:0);
+  const sh=E.inOut(P(t,67.3,1.3));$('t2_shutter').setAttribute('transform',`translate(0 ${(424*sh).toFixed(1)})`);
+  const kc=E.out(P(t,69.9,0.4));const fly=E.in(P(t,70.15,0.55));T('t2_cal',1560+fly*300,300-fly*200,kc,fly*40,kc*(1-fly));
+});
+
+// ---- SC-T2b: the hadith, the cheap trade, the way out (70.7 - 90.6)
+scene(70.6,91.2,`<svg class="full" viewBox="0 0 1920 1080">
+ <g id="g_gems">
+  <g id="g_g1"><circle r="110" fill="url(#rTeal)"/><path d="M0 -62 L46 -22 L28 52 L-28 52 L-46 -22 Z" fill="#46C7B0" stroke="#BFF3E8" stroke-width="3"/><path d="M-46 -22 H46 M0 -62 L-14 -22 L0 52 L14 -22 Z" stroke="#BFF3E8" stroke-width="2" fill="none" opacity=".7"/><text y="110" text-anchor="middle" font-family="Reem Kufi" font-size="44" fill="#BFF3E8">الصحة</text></g>
+  <g id="g_g2"><circle r="110" fill="url(#rGlow)"/><path d="M0 -62 L46 -22 L28 52 L-28 52 L-46 -22 Z" fill="#E7C06A" stroke="#FFF0C4" stroke-width="3"/><path d="M-46 -22 H46 M0 -62 L-14 -22 L0 52 L14 -22 Z" stroke="#FFF0C4" stroke-width="2" fill="none" opacity=".7"/><text y="110" text-anchor="middle" font-family="Reem Kufi" font-size="44" fill="#FFE7A8">الفراغ</text></g>
+ </g>
+ <g id="g_cheap">${[0,1].map(i=>`<g transform="translate(${i*50-25} 0)"><circle r="30" fill="#6B6152" stroke="#8C8070" stroke-width="3"/><circle r="18" fill="none" stroke="#8C8070" stroke-width="2"/></g>`).join('')}<text y="90" text-anchor="middle" font-family="Reem Kufi" font-size="38" fill="#A89C86">تمن رخيص</text></g>
+ <g id="g_x"><path d="M-30 -30 L30 30 M30 -30 L-30 30" stroke="#E58C6E" stroke-width="9" stroke-linecap="round"/></g>
+ <path id="g_arrow" d="M760 600 C860 540 1060 540 1160 600" fill="none" stroke="#D9B46A" stroke-width="4" stroke-dasharray="12 10" opacity="0"/>
+ <g id="g_path"><path d="M760 1100 L900 520 L1020 520 L1160 1100 Z" fill="url(#rGlow)" opacity=".5"/><path d="M960 1100 L960 540" stroke="#FFE2A0" stroke-width="3" stroke-dasharray="4 18" opacity=".8"/>
+  <path d="M880 540 V380 C880 320 920 290 960 270 C1000 290 1040 320 1040 380 V540 Z" fill="rgba(255,226,160,.18)" stroke="#E7C06A" stroke-width="4"/></g>
+ ${[0,1,2,3].map(i=>`<g id="g_m${i}"><use href="#star8" transform="scale(1.3)" fill="#0B2830" stroke="#D9B46A" stroke-width="3" opacity=".9"/><text y="16" text-anchor="middle" font-family="Reem Kufi" font-size="46" fill="#F2D594">${ar(i+1)}</text></g>`).join('')}
+</svg>`,(t)=>{
+  const g1=E.back(P(t,77.75,0.6)),g2=E.back(P(t,78.45,0.6));
+  const trade=E.inOut(P(t,82.0,1.4)),go=1-E.sine(P(t,85.8,0.6));
+  T('g_g1',lerp(1080,lerp(1080,1520,trade),1),lerp(700,lerp(700,620,trade),1),g1*0.85,0,clamp(g1*2)*go);
+  T('g_g2',lerp(840,lerp(840,1700,trade),1),lerp(700,lerp(700,640,trade),1),g2*0.85,0,clamp(g2*2)*go);
+  const kc=E.out(P(t,82.8,0.8));T('g_cheap',lerp(260,600,kc),680,1,0,kc*go);
+  const kx=E.back(P(t,84.6,0.4));T('g_x',600,590,kx,0,kx*go);
+  O('g_arrow',E.out(P(t,82.2,0.6))*go*0.8);
+  // the way out: a path of light to an arch
+  const kp=E.out(P(t,86.4,1.2))*(1-E.sine(P(t,90.4,0.5)));O('g_path',kp);
+  const xs=[1410,1110,810,510];for(let i=0;i<4;i++){const k=E.back(P(t,89.25+i*0.18,0.5))*(1-E.sine(P(t,90.7,0.4)));T('g_m'+i,xs[i],800,k*0.9,0,k);}
+});
+
+// ---- SC-F: the formula (101.1 - 150)
+const MX=[1500,1140,780,420],MY=430;
+scene(101.0,150.3,`<svg class="full" viewBox="0 0 1920 1080">
+ <g id="f_ripples">${[0,1,2].map(i=>`<circle id="f_r${i}" cx="960" cy="560" r="10" fill="none" stroke="#D9B46A" stroke-width="2.5" opacity="0"/>`).join('')}</g>
+ <g id="f_others">${[...Array(28)].map((_,i)=>`<circle id="f_o${i}" r="7" fill="#FFE2A0" opacity="0"/>`).join('')}</g>
+ <circle id="f_selfRing" cx="960" cy="560" r="150" fill="none" stroke="#D9B46A" stroke-width="2" stroke-dasharray="6 10" opacity="0"/>
+ <circle id="f_othersRing" cx="960" cy="560" r="330" fill="none" stroke="#6FC7B6" stroke-width="2" stroke-dasharray="6 10" opacity="0"/>
+ <text id="f_selfT" x="960" y="575" text-anchor="middle" font-family="Reem Kufi" font-size="44" fill="#F2D594" opacity="0">نفسك</text>
+ <text id="f_othersT" x="960" y="935" text-anchor="middle" font-family="Reem Kufi" font-size="40" fill="#8FD9C8" opacity="0">غيرك</text>
+ ${medal('f_m0',ICON.lamp,'الإيمان',1)}${medal('f_m1',ICON.tree,'العمل الصالح',2)}${medal('f_m2',ICON.talk,'التواصي بالحق',3)}${medal('f_m3',ICON.mountain,'التواصي بالصبر',4)}
+ ${[0,1,2].map(i=>`<text id="f_plus${i}" text-anchor="middle" font-family="Reem Kufi" font-size="80" fill="#D9B46A" opacity="0">+</text>`).join('')}
+ <text id="f_eq" text-anchor="middle" font-family="Reem Kufi" font-size="80" fill="#D9B46A" opacity="0">=</text>
+ <g id="f_res"><circle r="160" fill="url(#rGlow)"/><use href="#star8" transform="scale(1.9)" fill="#14363E" stroke="url(#gGold)" stroke-width="4"/><text y="-6" text-anchor="middle" font-family="Reem Kufi" font-size="40" fill="#FFE7A8">النجاة</text><text y="44" text-anchor="middle" font-family="Reem Kufi" font-size="34" fill="#F2D594">من الخُسر</text></g>
+ <!-- examples -->
+ <g id="f_ex1">${[['book','العلم',-160],['lamp','التصديق',160]].map(([k,l,x])=>`<g transform="translate(${x} 0)"><circle r="70" fill="#0B2830" stroke="#D9B46A" stroke-width="2"/><g transform="scale(.7)">${ICON[k]}</g><text y="112" text-anchor="middle" font-family="Reem Kufi" font-size="32" fill="#F2D594">${l}</text></g>`).join('')}</g>
+ <g id="f_ex2">${[['mosqueClock','الصلاة في وقتها',320],['gear','إتقان الشغل',0],['flower','كلمة حلوة',-320]].map(([k,l,x],i)=>`<g id="f_e2_${i}" transform="translate(${x} 0)"><circle r="70" fill="#0B2830" stroke="#D9B46A" stroke-width="2"/><g transform="scale(.7)">${ICON[k]}</g><text y="112" text-anchor="middle" font-family="Reem Kufi" font-size="32" fill="#F2D594">${l}</text></g>`).join('')}</g>
+ <g id="f_ex3"><rect x="-260" y="-150" width="520" height="300" rx="36" fill="#0B242C" stroke="#D9B46A" stroke-width="3"/>
+  <g id="f_b1"><rect x="-10" y="-110" width="240" height="70" rx="30" fill="#E7C06A"/><text x="110" y="-63" text-anchor="middle" font-family="IBM Plex Sans Arabic" font-weight="600" font-size="30" fill="#0B2830">يلا نلحق الصلاة</text></g>
+  <g id="f_b2"><rect x="-230" y="10" width="250" height="70" rx="30" fill="#2A5B63"/><text x="-105" y="57" text-anchor="middle" font-family="IBM Plex Sans Arabic" font-weight="600" font-size="30" fill="#F3EBD8">يلا، ونفكّر غيرنا</text></g></g>
+ <g id="f_ex4">${[0,1,2,3,4].map(i=>`<g id="f_d${i}" transform="translate(${(i-2)*170} 0)"><path d="M-55 90 V-40 C-55 -80 -25 -100 0 -105 C25 -100 55 -80 55 -40 V90 Z" fill="#0B2830" stroke="#D9B46A" stroke-width="3"/><path id="f_dl${i}" d="M-45 85 V-36 C-45 -70 -20 -88 0 -93 C20 -88 45 -70 45 -36 V85 Z" fill="${i===3?'#FFE2A0':'#163C45'}" opacity="${i===3?0:1}"/></g>`).join('')}</g>
+</svg>`,(t)=>{
+  const q=[nt(78.6),nt(86.86),nt(96.76),nt(104.1)];
+  // phases
+  const tSelf=nt(114.96),tEq=nt(122.34),tEnd=150.0;
+  const circ=E.inOut(P(t,tSelf+0.2,1.2)),back=E.inOut(P(t,tEq,1.0));
+  const circPos=[[960+0,560-150],[960,560+150],[960+330,560],[960-330,560]];
+  const eqX=[1580,1240,900,560],eqY=560;
+  for(let i=0;i<4;i++){
+    const lit=E.out(P(t,q[i],0.9));const appear=E.out(P(t,101.2+i*0.12,0.8));
+    let x=MX[i],y=MY,s=0.82;
+    x=lerp(x,circPos[i][0],circ);y=lerp(y,circPos[i][1],circ);s=lerp(s,0.62,circ);
+    x=lerp(x,eqX[i],back);y=lerp(y,eqY,back);s=lerp(s,0.66,back);
+    const pulse=1+0.04*Math.sin(t*2+i)*lit;
+    T('f_m'+i,x,y,s*pulse,0,appear*(1-E.sine(P(t,tEnd-0.6,0.6))));
+    O('f_m'+i+'_i',lerp(0.15,1,lit));O('f_m'+i+'_t',lit);O('f_m'+i+'_g',lit*(0.5+0.3*Math.sin(t*2.2+i)));
+  }
+  // examples (centered below the row)
+  const ex=(id,a,b)=>{const v=win(t,a,b,0.6,0.5);T(id,960,700,lerp(.9,1,v),0,v);};
+  ex('f_ex1',nt(84.1),nt(86.6));
+  ex('f_ex2',nt(90.8),nt(96.4));for(let i=0;i<3;i++){const k=E.back(P(t,nt([90.9,92.2,93.7][i]),0.5));$('f_e2_'+i).setAttribute('transform',`translate(${[320,0,-320][i]} ${((1-k)*30).toFixed(1)}) scale(${Math.max(.01,k).toFixed(3)})`);}
+  ex('f_ex3',nt(99.4),nt(103.6));const b1=E.back(P(t,nt(99.9),0.5)),b2=E.back(P(t,nt(102.0),0.5));T('f_b1',0,0,b1,0,b1);T('f_b2',0,0,b2,0,b2);
+  ex('f_ex4',nt(110.7),nt(115.0));const open=E.inOut(P(t,nt(113.4),1.0));O('f_dl3',open);$('f_d3').setAttribute('transform',`translate(170 0) scale(${(1+0.08*open).toFixed(3)})`);
+  // self / others
+  const vc=win(t,tSelf+0.2,tEq+0.3,0.8,0.6);O('f_selfRing',vc*0.8);O('f_selfT',vc*E.out(P(t,nt(117.2),0.5)));
+  const vo=vc*E.out(P(t,nt(119.6),0.6));O('f_othersRing',vo*0.8);O('f_othersT',vo);
+  for(let i=0;i<3;i++){const k=((t-nt(119.6))*0.45+i/3)%1;const c=$('f_r'+i);c.setAttribute('r',(330+k*260).toFixed(1));c.setAttribute('opacity',(vo*(1-k)*0.6).toFixed(2));}
+  for(let i=0;i<28;i++){const a=i/28*6.283+t*0.05,rr=470+((i*37)%5)*22;const k=E.out(P(t,nt(119.9)+i*0.04,0.6));const c=$('f_o'+i);c.setAttribute('cx',(960+Math.cos(a)*rr).toFixed(1));c.setAttribute('cy',(560+Math.sin(a)*rr*0.86).toFixed(1));c.setAttribute('opacity',(vc*k*(0.5+0.5*Math.sin(t*2+i))).toFixed(2));}
+  // the equation
+  const ve=E.out(P(t,tEq+0.6,0.6))*(1-E.sine(P(t,tEnd-0.6,0.6)));
+  for(let i=0;i<3;i++){const k=E.out(P(t,tEq+0.7+i*0.25,0.4));const el=$('f_plus'+i);el.setAttribute('x',((eqX[i]+eqX[i+1])/2).toFixed(0));el.setAttribute('y',(eqY+26).toFixed(0));O(el,k*ve);}
+  const ke=E.out(P(t,nt(124.3),0.5));const eq=$('f_eq');eq.setAttribute('x',380);eq.setAttribute('y',eqY+26);O(eq,ke*ve);
+  const kr=E.back(P(t,nt(125.4),0.7));T('f_res',200,eqY,0.72*kr*(1+0.03*Math.sin(t*2)),0,kr*ve);
+});
+
+// ---- SC-E: the final words & end card (150 - 167)
+scene(150.0,DUR+1,`<svg class="full" viewBox="0 0 1920 1080">
+ <g id="e_rays" transform="translate(960 560)">${[...Array(20)].map((_,i)=>`<path d="M-30 0 L0 -1100 L30 0 Z" fill="#FFE2A0" opacity=".08" transform="rotate(${i*18})"/>`).join('')}</g>
+ <g id="e_hg">${hourglassSVG('e_h')}</g>
+ <g id="e_rise">${[...Array(40)].map((_,i)=>`<circle id="e_p${i}" r="${(2+(i%4)).toFixed(0)}" fill="#FFE2A0" opacity="0"/>`).join('')}</g>
+</svg>`,(t)=>{
+  const k=E.out(P(t,150.2,1.0))*(1-E.sine(P(t,156.3,0.6)));
+  T('e_hg',960,640,0.55,0,k*0.0+0);
+  const kr=E.out(P(t,nt(130.36),1.2))*(1-E.sine(P(t,156.3,0.8)));T('e_rays',960,560,lerp(.6,1.1,kr),t*4,kr);
+  for(let i=0;i<40;i++){const p=((t-nt(130.36))*0.25+i/40)%1;const c=$('e_p'+i);const x=960+Math.sin(i*2.1)*620*(0.3+p);c.setAttribute('cx',x.toFixed(1));c.setAttribute('cy',(1000-p*900).toFixed(1));c.setAttribute('opacity',(kr*Math.sin(Math.PI*p)*0.8).toFixed(2));}
+});
+
+// ================= background & light =================
+const bctx=$('beams').getContext('2d');const BR=rng(3);const MOTES=[...Array(70)].map(()=>({x:BR()*W,y:BR()*H,s:4+BR()*12,r:.8+BR()*2.2,ph:BR()*6.28}));
+let ROSE_CACHE=null;
+function updateBG(t){
+  $('patR').setAttribute('transform',`translate(${((t*6)%200).toFixed(1)} ${((t*3)%200).toFixed(1)})`);
+  const verse=VERSE_WIN.some(([a,b])=>t>a-0.5&&t<b+0.5)||t>156.6;
+  $('patR').setAttribute('opacity',(0.11+(verse?0.06:0)+0.02*Math.sin(t*.5)).toFixed(3));
+  $('bigRosette').setAttribute('transform',`translate(960 470) rotate(${(t*2)%360})`);
+  bctx.clearRect(0,0,W,H);
+  for(let i=0;i<5;i++){const x=960+Math.sin(t*.12+i*1.3)*520,w=180+i*40;const g=bctx.createLinearGradient(x,0,x,H);g.addColorStop(0,'rgba(255,226,160,0.10)');g.addColorStop(1,'rgba(255,226,160,0)');
+    bctx.fillStyle=g;bctx.beginPath();bctx.moveTo(x-w*0.3,-10);bctx.lineTo(x+w*0.3,-10);bctx.lineTo(x+w*1.6,H);bctx.lineTo(x-w*1.6,H);bctx.closePath();bctx.fill();}
+  MOTES.forEach(m=>{const y=((m.y-t*m.s)%H+H)%H,x=m.x+Math.sin(t*.4+m.ph)*30;const a=.12+.3*Math.sin(t*1.3+m.ph)**2;bctx.fillStyle=`rgba(255,228,170,${a.toFixed(3)})`;bctx.beginPath();bctx.arc(x,y,m.r,0,6.283);bctx.fill();});
+}
+// time-capital counter (top-left)
+function updateHUD(t){const show=[[7.7,22.0],[29.4,49.55],[55.9,90.9],[101.3,156.5]];const v=show.reduce((a,[s,e])=>Math.max(a,win(t,s,e,0.6,0.5)),0);
+  const h=$('hud');h.style.opacity=v.toFixed(3);h.style.display=v<=0.001?'none':'flex';
+  $('hudN').textContent=ar(86400-Math.floor(Math.max(0,t-9.5)));
+  const lv=0.9-((t-7.7)/160)*0.8;$('hudSandT').setAttribute('transform',`translate(0 ${(-1+(1-lv)*16).toFixed(1)}) scale(1 ${Math.max(0.05,lv).toFixed(3)})`);}
+
+function seek(t){
+  updateBG(t);
+  SC.forEach(sc=>{const v=win(t,sc.s,sc.e,0.8,0.8);if(v<=0.001){sc.el.style.display='none';return;}sc.el.style.display='block';sc.el.style.opacity=v.toFixed(3);sc.el.style.transform=`scale(${lerp(1.03,1,v).toFixed(4)})`;sc.update(t);});
+  updateVerses(t);updateNarr(t);updateCards(t);updateHUD(t);
+  $('fade').style.opacity=Math.max(1-t/0.8,P(t,DUR-1.2,1.2)).toFixed(3);
+}
+window.seek=seek;window.DUR=DUR;seek(0);
+</script>
+</body>
+</html>
