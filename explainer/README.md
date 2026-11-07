@@ -6,3 +6,7 @@
 - `preview.js`: renders individual frames, for example `node preview.js 5 24.5 50`.
 
 Scene timing comes from pause detection on the voiceover (37 speech segments, one per phrase of the script), listed in `SEG` at the top of the script.
+
+## Sound design
+- `sfx.py`: synthesizes every sound effect (no music) on the same timeline as the animation: whooshes, pops, impacts, risers, UI clicks, typing, chimes. It mixes them under the voiceover with ducking, stereo panning that follows on-screen position, and light reverb. Run `python3 sfx.py vo48.wav mix.wav` (48 kHz mono voiceover in, stereo mix out at about −14 LUFS).
+- `sfx-only.wav`: the effects layer on its own, normalized, for use in another editor.
