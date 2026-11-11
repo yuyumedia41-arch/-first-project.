@@ -1,0 +1,658 @@
+<!doctype html>
+<html lang="ar">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="fonts/fonts.css">
+<script src="env.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1920px;height:1080px;overflow:hidden;background:#000}
+#stage{position:absolute;inset:0;overflow:hidden;background:#1a0f08}
+.layer{position:absolute;inset:0}
+svg.full{position:absolute;left:0;top:0;width:1920px;height:1080px;overflow:hidden}
+.scene{position:absolute;inset:0;display:none}
+#isl{background:radial-gradient(110% 90% at 50% 38%,#11343D 0%,#0A2129 45%,#051118 100%);opacity:0}
+#grain{mix-blend-mode:overlay;opacity:.10;pointer-events:none}
+#vig{background:radial-gradient(95% 85% at 50% 48%,transparent 58%,rgba(0,0,0,.55) 100%);pointer-events:none}
+.bar{position:absolute;left:0;width:1920px;height:46px;background:#000}
+#fade{background:#000;opacity:0}
+#flashW{background:#fff;opacity:0}
+/* verses */
+.verse{position:absolute;left:0;width:1920px;text-align:center;direction:rtl;font-family:'KFGQPC Hafs';color:#F7E6B5;line-height:1.9;white-space:nowrap;text-shadow:0 0 28px rgba(255,214,140,.45),0 0 2px rgba(255,240,200,.8);transform-origin:50% 50%}
+#sadaqa{position:absolute;left:0;width:1920px;text-align:center;direction:rtl;font-family:'Amiri';font-weight:700;font-size:86px;color:#F2C96A;text-shadow:0 0 30px rgba(255,200,90,.6)}
+/* narration */
+#narr{position:absolute;left:110px;width:1700px;top:968px;direction:rtl}
+.nl{position:absolute;width:1700px;display:flex;flex-wrap:wrap;justify-content:center;column-gap:.26em;font-family:'IBM Plex Sans Arabic';font-weight:600;font-size:48px;line-height:1.4;color:#FFF6E4;text-shadow:0 3px 0 rgba(0,0,0,.55),0 4px 22px rgba(0,0,0,.9),0 0 3px rgba(0,0,0,.9);transform:translateY(-50%)}
+.nl .w{display:inline-block}.nl .w.g{color:#FFD166}
+/* bubbles */
+.bub{position:absolute;direction:rtl;padding:16px 34px 20px;border-radius:38px;background:#FFFDF7;border:5px solid #3A2414;box-shadow:0 10px 0 rgba(40,20,5,.28),0 20px 44px rgba(0,0,0,.35);display:flex;flex-wrap:nowrap;column-gap:.24em;font-family:'IBM Plex Sans Arabic';font-weight:700;color:#2E1A0C;line-height:1.3;width:max-content;white-space:nowrap;transform-origin:var(--ox) 115%}
+.bub::after{content:'';position:absolute;width:40px;height:40px;background:inherit;border:inherit;border-top:none;border-left:none;bottom:-25px;transform:rotate(45deg) skew(12deg,12deg)}
+.bub.tl::after{left:64px}.bub.tr::after{right:64px}
+.bub .name{position:absolute;top:-27px;right:26px;font-family:'Reem Kufi';font-size:24px;padding:1px 16px 3px;border-radius:16px;color:#fff;line-height:1.4}
+.bub.H{border-color:#8A4B14;background:#FFF7E8}.bub.H .name{background:#8A4B14}
+.bub.C{border-color:#2C6CA8;background:#F3F9FF}.bub.C .name{background:#2C6CA8}
+.bub.M{border-color:#2F6B4A;background:#F2FBF4}.bub.M .name{background:#2F6B4A}
+.bub.shout{border-width:7px;border-radius:18px 44px 18px 44px}
+.bub .w.g{color:#C8102E}
+/* lower third */
+.lt{position:absolute;direction:rtl;display:flex;align-items:stretch;font-family:'Reem Kufi'}
+.lt .a{background:#F2B544;color:#2A1606;font-size:50px;padding:4px 30px 10px;border-radius:0 14px 14px 0}
+.lt .b{background:rgba(20,12,6,.86);color:#FFE9C4;font-size:30px;padding:16px 26px 10px;border-radius:14px 0 0 14px}
+.tag{position:absolute;direction:rtl;font-family:'Lalezar';font-size:46px;padding:4px 26px 8px;border-radius:14px;color:#fff;white-space:nowrap;box-shadow:0 8px 0 rgba(0,0,0,.25)}
+/* cards */
+.card{position:absolute;direction:rtl;text-align:center;padding:38px 66px 32px;border-radius:26px;background:linear-gradient(180deg,rgba(13,40,48,.93),rgba(8,26,32,.93));border:2px solid rgba(217,180,106,.85);box-shadow:0 0 0 8px rgba(217,180,106,.12),0 30px 80px rgba(0,0,0,.55),inset 0 0 60px rgba(217,180,106,.08)}
+.card::before{content:'';position:absolute;inset:10px;border-radius:18px;border:1px solid rgba(217,180,106,.45)}
+.card .hd{font-family:'Reem Kufi';font-size:28px;color:#D9B46A;margin-bottom:8px}
+.card .tx{font-family:'Amiri';font-size:52px;line-height:1.6;color:#F7EBD0}.card .tx .q{color:#FFE3A3}
+.card .src{font-family:'Reem Kufi';font-size:26px;color:#D9B46A;margin-top:12px}
+.card .ln{opacity:0}
+.sign{font-family:'Lalezar'}
+</style>
+</head>
+<body>
+<div id="stage">
+ <div class="layer" id="film"></div>
+ <div class="layer" id="isl">
+  <svg class="full" viewBox="0 0 1920 1080"><defs>
+   <pattern id="geo" width="200" height="200" patternUnits="userSpaceOnUse"><g fill="none" stroke="#D9B46A" stroke-width="1.6">
+     <rect x="58" y="58" width="84" height="84"/><rect x="58" y="58" width="84" height="84" transform="rotate(45 100 100)"/><circle cx="100" cy="100" r="22"/>
+     <path d="M100 0 L100 41 M100 159 L100 200 M0 100 L41 100 M159 100 L200 100 M0 0 L70 70 M200 0 L130 70 M0 200 L70 130 M200 200 L130 130"/>
+     <rect x="-42" y="-42" width="84" height="84" transform="rotate(45 0 0)"/><rect x="158" y="-42" width="84" height="84" transform="rotate(45 200 0)"/><rect x="-42" y="158" width="84" height="84" transform="rotate(45 0 200)"/><rect x="158" y="158" width="84" height="84" transform="rotate(45 200 200)"/></g></pattern>
+   <radialGradient id="patFade" cx="50%" cy="42%" r="70%"><stop offset="0" stop-color="#fff"/><stop offset=".7" stop-color="#fff" stop-opacity=".35"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+   <mask id="patMask"><rect x="-200" y="-200" width="2320" height="1480" fill="url(#patFade)"/></mask></defs>
+   <g mask="url(#patMask)"><rect id="patR" x="-400" y="-400" width="2720" height="1880" fill="url(#geo)" opacity=".13"/></g></svg>
+  <canvas id="beams" width="1920" height="1080" style="position:absolute;inset:0;mix-blend-mode:screen"></canvas>
+ </div>
+ <div class="layer" id="mid"></div>
+ <svg class="full" id="archSvg" viewBox="0 0 1920 1080"><g id="arch" opacity="0">
+   <path id="archP1" d="M260 930 L260 430 C260 250 520 150 960 70 C1400 150 1660 250 1660 430 L1660 930 Z" fill="rgba(8,30,36,.55)" stroke="url(#gGold)" stroke-width="5"/>
+   <path id="archP2" d="M300 900 L300 440 C300 280 540 190 960 112 C1380 190 1620 280 1620 440 L1620 900 Z" fill="none" stroke="#D9B46A" stroke-width="1.6" opacity=".7"/>
+   <g transform="translate(960 70)"><use href="#star8" fill="none" stroke="url(#gGold)" stroke-width="4" transform="scale(.5)"/><circle r="9" fill="#F2D594"/></g>
+   <circle id="archGlow" cx="960" cy="500" r="540" fill="url(#rGlowG)" opacity=".25"/></g></svg>
+ <div class="layer" id="verses"></div>
+ <div class="layer" id="ui"><div id="narr"></div></div>
+ <canvas class="layer" id="grain" width="480" height="270" style="width:1920px;height:1080px;image-rendering:auto"></canvas>
+ <div class="layer" id="vig"></div>
+ <div class="bar" id="barT" style="top:0"></div><div class="bar" id="barB" style="bottom:0"></div>
+ <div class="layer" id="flashW"></div>
+ <div class="layer" id="fade"></div>
+</div>
+<svg width="0" height="0" style="position:absolute"><defs>
+ <linearGradient id="gGold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE7A8"/><stop offset=".5" stop-color="#E3BA62"/><stop offset="1" stop-color="#A87A2C"/></linearGradient>
+ <radialGradient id="rGlowG"><stop offset="0" stop-color="#FFE9B0" stop-opacity=".85"/><stop offset=".45" stop-color="#E9B95A" stop-opacity=".25"/><stop offset="1" stop-color="#E9B95A" stop-opacity="0"/></radialGradient>
+ <radialGradient id="rSun"><stop offset="0" stop-color="#FFF4D0" stop-opacity="1"/><stop offset=".3" stop-color="#FFD98A" stop-opacity=".7"/><stop offset="1" stop-color="#FFB25A" stop-opacity="0"/></radialGradient>
+ <radialGradient id="rBulb"><stop offset="0" stop-color="#FFF3C0" stop-opacity=".95"/><stop offset=".35" stop-color="#FFC966" stop-opacity=".45"/><stop offset="1" stop-color="#FFA940" stop-opacity="0"/></radialGradient>
+ <linearGradient id="gSkyD" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F6A45C"/><stop offset=".55" stop-color="#FFD39A"/><stop offset="1" stop-color="#FFE9C8"/></linearGradient>
+ <linearGradient id="gWood" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#B9773F"/><stop offset="1" stop-color="#8A5328"/></linearGradient>
+ <linearGradient id="gMango" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F6F06A"/><stop offset=".5" stop-color="#FFD23C"/><stop offset="1" stop-color="#F59A2E"/></linearGradient>
+ <linearGradient id="gRot" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8E7B3A"/><stop offset="1" stop-color="#4E3B22"/></linearGradient>
+ <radialGradient id="gOrange" cx="35%" cy="30%"><stop offset="0" stop-color="#FFC55A"/><stop offset="1" stop-color="#F07A1A"/></radialGradient>
+ <radialGradient id="gApple" cx="35%" cy="30%"><stop offset="0" stop-color="#FF7A6A"/><stop offset="1" stop-color="#C4202A"/></radialGradient>
+ <linearGradient id="gGround" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C9A27A"/><stop offset="1" stop-color="#8F6A48"/></linearGradient>
+ <linearGradient id="gScale" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3E9A8E"/><stop offset="1" stop-color="#226A61"/></linearGradient>
+ <linearGradient id="gBrass" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F3DB9A"/><stop offset="1" stop-color="#B58A3A"/></linearGradient>
+ <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+ <filter id="blurS" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="14"/></filter>
+ <filter id="sh" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#2A1000" flood-opacity=".35"/></filter>
+ <path id="star8" d="M0 -60 L17 -41 L42 -42 L41 -17 L60 0 L41 17 L42 42 L17 41 L0 60 L-17 41 L-42 42 L-41 17 L-60 0 L-41 -17 L-42 -42 L-17 -41 Z"/>
+ <path id="spark" d="M0 -60 C8 -8 8 -8 60 0 C8 8 8 8 0 60 C-8 8 -8 8 -60 0 C-8 -8 -8 -8 0 -60 Z"/>
+</defs></svg>
+<script>
+const Q=${QURAN};
+// ================= utilities =================
+const W=1920,H=1080,DUR=207.5,FPS=30;
+const clamp=(v,a=0,b=1)=>Math.min(b,Math.max(a,v));
+const P=(t,a,d)=>clamp((t-a)/d);
+const lerp=(a,b,k)=>a+(b-a)*k;
+const E={out:k=>1-Math.pow(1-k,3),in:k=>k*k*k,inOut:k=>k<.5?4*k*k*k:1-Math.pow(-2*k+2,3)/2,sine:k=>-(Math.cos(Math.PI*k)-1)/2,
+ back:k=>{const c1=1.7,c3=c1+1;return k<=0?0:1+c3*Math.pow(k-1,3)+c1*Math.pow(k-1,2)},
+ elastic:k=>k<=0?0:k>=1?1:Math.pow(2,-10*k)*Math.sin((k*10-.75)*(2*Math.PI)/3)+1};
+const pop=(t,a,d=.5)=>E.back(P(t,a,d));
+const bell=(t,a,d)=>{const k=(t-a)/d;return k<0||k>1?0:Math.sin(Math.PI*k)};
+const win=(t,a,b,fi=.5,fo=.5)=>Math.min(E.sine(P(t,a,fi)),1-E.sine(P(t,b-fo,fo)));
+// keyframes: [[t,v],...] with inOut easing between
+function kf(t,keys,ease=E.inOut){if(t<=keys[0][0])return keys[0][1];for(let i=1;i<keys.length;i++){if(t<=keys[i][0]){const k=ease((t-keys[i-1][0])/(keys[i][0]-keys[i-1][0]));return lerp(keys[i-1][1],keys[i][1],k);}}return keys[keys.length-1][1];}
+const $=id=>document.getElementById(id);
+function T(el,x,y,s=1,r=0,o){if(typeof el==='string')el=$(el);if(!el)return;const sx=Array.isArray(s)?s[0]:s,sy=Array.isArray(s)?s[1]:s;el.setAttribute('transform',`translate(${x.toFixed(2)} ${y.toFixed(2)}) rotate(${r.toFixed(2)}) scale(${(Math.abs(sx)<1e-4?1e-4:sx).toFixed(4)} ${(Math.abs(sy)<1e-4?1e-4:sy).toFixed(4)})`);if(o!==undefined)el.setAttribute('opacity',clamp(o).toFixed(3));}
+function O(el,o){if(typeof el==='string')el=$(el);if(el)el.setAttribute('opacity',clamp(o).toFixed(3));}
+const AR='٠١٢٣٤٥٦٧٨٩';const ar=n=>String(n).replace(/[0-9]/g,d=>AR[d]).replace('.','٫');
+function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const env=t=>{const i=Math.floor(t*FPS);return (window.ENV&&ENV[i])||0};
+const shake=(t,a,d,amp,f=60)=>{const k=P(t,a,d);return k<=0||k>=1?0:Math.sin(t*f)*amp*(1-k)};
+// clip A / clip B voice time -> film timeline
+const a=t=>t<66.25?t+2.0:t+32.0;      // 30s verse slot inserted at 66.25
+const b=t=>t+111.4;
+const VS=68.25,VE=98.25,ES=171.0,SAD=201.0; // verse slot, end card, "sadaqa"
+
+// ================= lines =================
+// [speaker, parts:[start,end,text] ..., opts]
+const LINES=[
+ {sp:'N',p:[[a(0.36),a(1.64),'في سوق الخضار...'],[a(2.28),a(2.99),'عم حسن،'],[a(3.34),a(4.92),'أشطر فكهاني في المنطقة.']]},
+ {sp:'N',p:[[a(5.62),a(6.44),'أو...'],[a(6.78),a(7.57),'هو فاكر كده.']]},
+ {sp:'H',p:[[a(8.27),a(9.6),'قرّب يا باشا، قرّب!'],[a(9.6),a(12.03),'مانجة عسل، لسه نازلة من عالشجرة!']],b:{x:1230,y:250,tail:'tl'},g:['عسل،'],size:42},
+ {sp:'N',p:[[a(12.69),a(14.18),'اللي فوق عسل فعلاً...'],[a(14.55),a(16.0),'إنما اللي تحت؟'],[a(16.02),a(16.79),'ربنا يستر.']],g:['فوق','تحت؟']},
+ {sp:'C',p:[[a(17.17),a(18.6),'إديني اتنين كيلو يا عم حسن،'],[a(18.6),a(20.18),'بس اخترلي من الحلو، الله يخليك.']],b:{x:120,y:330,tail:'tl'},size:40,wrap:760},
+ {sp:'H',p:[[a(20.49),a(21.54),'من عينيا يا باشا!'],[a(21.54),a(22.45),'ده أنا ميزاني...'],[a(22.5),a(23.18),'دهب!']],b:{x:1020,y:230,tail:'tl'},g:['دهب!']},
+ {sp:'N',p:[[a(23.49),a(24.6),'دهب فعلاً...'],[a(24.6),a(26.33),'ما هو بياكل من كل كيلو،'],[a(26.72),a(27.1),'ربع.']],g:['ربع.']},
+ {sp:'H',p:[[a(27.6),a(28.6),'هيهيهي...'],[a(28.6),a(29.53),'ولا من شاف،'],[a(30.10),a(30.79),'ولا من دري.']],b:{x:1180,y:250,tail:'tl'}},
+ {sp:'N',p:[[a(31.25),a(31.72),'وفي يوم،'],[a(32.15),a(34.35),'عم حسن راح يشتري بضاعة من تاجر الجملة.']],g:['الجملة.']},
+ {sp:'M',p:[[a(34.72),a(36.4),'عشرين كيلو برتقان يا معلم،'],[a(36.4),a(38.12),'والوزن مظبوط بالجرام!']],b:{x:1080,y:172,tail:'tr'},g:['عشرين'],size:42},
+ {sp:'N',p:[[a(38.50),a(39.48),'رجع المحل،'],[a(39.48),a(40.21),'ووزنهم...'],[a(40.67),a(41.68),'طلعوا سبعتاشر.']],g:['سبعتاشر.']},
+ {sp:'N',p:[[a(42.21),a(43.38),'وبص تحت في القفص،'],[a(43.71),a(45.22),'لقى نص البرتقان بايظ.']],g:['بايظ.']},
+ {sp:'H',p:[[a(45.77),a(46.44),'إيه ده؟!'],[a(46.44),a(47.28),'ده غش!']],b:{x:1210,y:260,tail:'tl'},g:['غش!'],size:60,shout:1},
+ {sp:'H',p:[[a(47.28),a(48.46),'أنا عايز حقي كامل!'],[a(48.46),a(49.72),'مش ناقص ولا جرام!']],b:{x:330,y:176,tail:'tl'},g:['كامل!'],size:46,shout:1},
+ {sp:'M',p:[[a(49.72),a(50.64),'مالك يا عم حسن؟'],[a(50.94),a(52.25),'ما هو ده شغل السوق.'],[a(52.62),a(53.11),'ولا إيه؟']],b:{x:1000,y:176,tail:'tr'},size:40},
+ {sp:'N',p:[[a(53.47),a(54.11),'ثانية واحدة...'],[a(54.62),a(55.54),'وقّف المشهد هنا.']],g:['وقّف']},
+ {sp:'N',p:[[a(55.93),a(58.59),'الراجل اللي زعلان دلوقتي عشان حقه نقص...']]},
+ {sp:'N',p:[[a(59.03),a(61.68),'هو هو اللي بينقّص حق الناس كل يوم.']],g:['هو','بينقّص']},
+ {sp:'N',p:[[a(62.01),a(63.77),'والقرآن وصف التصرف ده...'],[a(64.12),a(66.05),'من أكتر من ١٤٠٠ سنة.']],g:['والقرآن','١٤٠٠']},
+ {sp:'N',p:[[a(66.46),a(66.87),'«ويل»...'],[a(67.34),a(70.30),'الشيخ السعدي وضّح إنها كلمة عذاب ووعيد.']],g:['«ويل»...','السعدي']},
+ {sp:'N',p:[[a(70.72),a(71.48),'والتطفيف،'],[a(71.80),a(73.38),'زي ما وضّح ابن كثير،'],[a(73.38),a(75.6),'هو البخس في الكيل والميزان...']],g:['والتطفيف،','كثير،']},
+ {sp:'N',p:[[a(75.6),a(77.56),'يعني ياخد زيادة لما يشتري،'],[a(77.56),a(78.8),'وينقّص لما يبيع.']],g:['زيادة','وينقّص']},
+ {sp:'N',p:[[b(0.0),b(3.85),'والإمام الطبري وضّح إنهم اللي بينقصوا الناس حقهم،'],[b(4.25),b(5.67),'ويبخسوهم حقوقهم.']],g:['الطبري']},
+ {sp:'N',p:[[b(6.10),b(7.65),'والسعدي سمّاها باسمها:'],[b(7.95),b(9.59),'سرقة لأموال الناس.']],g:['سرقة']},
+ {sp:'N',p:[[b(10.01),b(11.32),'وفي صحيح مسلم،'],[b(11.32),b(14.66),'النبي صلى الله عليه وسلم مرّ على كومة أكل،']],g:['مسلم،']},
+ {sp:'N',p:[[b(14.99),b(16.2),'فدخّل إيده فيها...'],[b(16.2),b(17.62),'لقى فيها بلل.'],[b(17.62),b(18.24),'فقال:']],g:['بلل.']},
+ {sp:'N',p:[[b(20.75),b(21.06),'قال:']]},
+ {sp:'N',p:[[b(23.77),b(25.29),'يعني المطر نزل عليه.']]},
+ {sp:'N',p:[[b(25.72),b(27.62),'فقال صلى الله عليه وسلم:']]},
+ {sp:'N',p:[[b(33.30),b(35.32),'ودار الإفتاء المصرية بتأكد:'],[b(35.73),b(38.30),'الغش في البيع والشراء حرام شرعاً.']],g:['حرام']},
+ {sp:'N',p:[[b(38.69),b(40.72),'عم حسن فضل ساكت طول الطريق...']]},
+ {sp:'H',p:[[b(41.15),b(41.75),'يعني أنا...'],[b(42.34),b(43.55),'كنت بعمل في الناس كده،'],[b(44.02),b(44.56),'كل يوم؟']],b:{x:1180,y:270,tail:'tl'},size:42},
+ {sp:'N',p:[[b(45.08),b(46.44),'وتاني يوم الصبح...'],[b(46.44),b(47.66),'ظبط الميزان،'],[b(47.66),b(49.16),'وشال الفاكهة البايظة على جنب.']],g:['ظبط']},
+ {sp:'C',p:[[b(49.65),b(50.56),'إيه ده يا عم حسن؟'],[b(50.96),b(52.25),'ده الوزن زايد النهارده!']],b:{x:140,y:330,tail:'tl'},g:['زايد'],size:42},
+ {sp:'H',p:[[b(52.75),b(53.84),'خلّيها زيادة يا ابني...'],[b(54.22),b(55.17),'أحسن ما تبقى ناقصة.']],b:{x:1010,y:235,tail:'tl'},size:42},
+ {sp:'N',p:[[b(55.64),b(56.83),'اللي ترضاه لنفسك...'],[b(57.30),b(58.14),'ارضاه للناس.']],big:1,g:['ارضاه','للناس.']},
+];
+const NAMES={H:'عم حسن',C:'الزبون',M:'تاجر الجملة'};
+const SPK={N:[],H:[],C:[],M:[]};LINES.forEach(L=>L.p.forEach(p=>SPK[L.sp].push([p[0]-0.03,p[1]+0.05])));
+const talk=(sp,t)=>SPK[sp].some(([s,e])=>t>=s&&t<=e)?env(t):0;
+const UI=$('ui'),narrRoot=$('narr');
+LINES.forEach((L,i)=>{const el=document.createElement('div');const size=L.size||(L.sp==='N'?(L.big?70:48):46);
+  if(L.sp==='N'){el.className='nl';el.style.fontSize=size+'px';narrRoot.appendChild(el);}
+  else{el.className='bub '+L.sp+' '+L.b.tail+(L.shout?' shout':'');el.style.left=L.b.x+'px';el.style.top=L.b.y+'px';el.style.fontSize=size+'px';el.style.setProperty('--ox',L.b.tail==='tr'?'85%':'15%');
+    if(L.wrap){el.style.flexWrap='wrap';el.style.whiteSpace='normal';el.style.maxWidth=L.wrap+'px';el.style.justifyContent='center';}
+    const nm=document.createElement('div');nm.className='name';nm.textContent=NAMES[L.sp];el.appendChild(nm);UI.insertBefore(el,narrRoot);}
+  L.el=el;L.words=[];L.start=L.p[0][0];L.end=L.p[L.p.length-1][1];
+  L.p.forEach(([s,e,txt])=>{const ws=txt.split(' ');const wts=ws.map(w=>w.replace(/[.،؟!:«»"]/g,'').length+1.6);const tot=wts.reduce((x,y)=>x+y,0);let c=0;
+   ws.forEach((w,j)=>{const sp=document.createElement('span');sp.className='w'+((L.g||[]).includes(w)?' g':'');sp.textContent=w;el.appendChild(sp);L.words.push({el:sp,t:s+(e-s)*0.9*c/tot-0.07,hot:(L.g||[]).includes(w)});c+=wts[j];});});});
+LINES.forEach((L,i)=>{const nx=LINES.slice(i+1).find(M=>M.sp==='N'===(L.sp==='N'));L.exit=L.sp==='N'?Math.min(L.end+1.0,nx?nx.start-0.12:L.end+1.4):L.end+0.45;});
+function updateText(t){LINES.forEach(L=>{const vis=t>=L.start-0.15&&t<L.exit;if(!vis){L.el.style.display='none';return;}L.el.style.display='flex';
+  const x=P(t,L.exit-0.3,0.3);
+  if(L.sp==='N'){L.el.style.opacity=(1-x).toFixed(3);L.el.style.transform=`translateY(calc(-50% + ${(-12*x).toFixed(1)}px))`;}
+  else{if(!L.wd){L.wd=L.el.offsetWidth;}const left=clamp(L.b.x,40,1880-L.wd);L.el.style.left=left+'px';const k=pop(t,L.start-0.15,0.4)*(1-E.in(x));
+    const jit=L.shout?Math.sin(t*70)*3:0;L.el.style.transform=`translate(${jit.toFixed(1)}px,-100%) scale(${Math.max(0,k).toFixed(4)}) rotate(${(Math.sin(t*2+L.start)*1).toFixed(2)}deg)`;L.el.style.opacity=clamp(k*3).toFixed(3);}
+  L.words.forEach(w=>{const k=P(t,w.t,0.42),ke=E.out(k);w.el.style.opacity=ke.toFixed(3);
+    const sc=w.hot&&L.sp!=='N'?lerp(1.5,1,E.elastic(P(t,w.t,0.8))):1;
+    w.el.style.transform=`translateY(${((1-ke)*14).toFixed(1)}px) scale(${sc.toFixed(3)})`;w.el.style.filter=k<1&&L.sp==='N'?`blur(${((1-ke)*7).toFixed(1)}px)`:'none';});});}
+
+// ================= character rig =================
+function person(id,o){
+ const sk=o.skin,sd=o.skinD,hc=o.hair,sl=o.sleeve||o.top;
+ const arm=(s,x)=>`<g id="${id}_a${s}" transform="translate(${x} 36)"><g id="${id}_a${s}u"><rect x="-24" y="-16" width="48" height="130" rx="24" fill="${sl}"/><g id="${id}_a${s}f" transform="translate(0 100)"><rect x="-21" y="-14" width="42" height="${o.short?44:106}" rx="21" fill="${sl}"/>${o.short?`<rect x="-17" y="20" width="34" height="78" rx="17" fill="${sk}"/>`:''}<g id="${id}_p${s}">${(o.hold&&o.hold[s])||''}</g><circle cy="104" r="26" fill="${sk}"/><path d="M-14 112 q14 12 28 0" stroke="${sd}" stroke-width="3" fill="none" opacity=".5"/></g></g></g>`;
+ const bw=o.belly||104;
+ let body='';
+ if(o.style==='robe'){body=`<path d="M-${bw} ${o.len||500} C-${bw+18} 240 -${bw-4} 34 -48 2 L48 2 C${bw-4} 34 ${bw+18} 240 ${bw} ${o.len||500} Z" fill="${o.top}"/>
+   <clipPath id="${id}_bc"><path d="M-${bw} ${o.len||500} C-${bw+18} 240 -${bw-4} 34 -48 2 L48 2 C${bw-4} 34 ${bw+18} 240 ${bw} ${o.len||500} Z"/></clipPath>
+   <g clip-path="url(#${id}_bc)" opacity=".28">${[-90,-60,-30,0,30,60,90].map(x=>`<rect x="${x-3}" y="0" width="6" height="520" fill="${o.stripe||'#5B6E86'}"/>`).join('')}</g>
+   <path d="M-26 2 L0 86 L26 2" fill="none" stroke="${o.stripe||'#5B6E86'}" stroke-width="5" opacity=".7"/><circle cy="52" r="5" fill="${o.stripe||'#5B6E86'}"/>
+   <ellipse cx="-46" cy="${(o.len||500)+8}" rx="44" ry="16" fill="#3A2414"/><ellipse cx="46" cy="${(o.len||500)+8}" rx="44" ry="16" fill="#3A2414"/>`;}
+ else{body=`<rect x="-78" y="280" width="68" height="220" rx="24" fill="${o.pants}"/><rect x="10" y="280" width="68" height="220" rx="24" fill="${o.pants}"/><ellipse cx="-48" cy="506" rx="50" ry="18" fill="#2A1A10"/><ellipse cx="48" cy="506" rx="50" ry="18" fill="#2A1A10"/>
+   <path d="M-${bw} 310 C-${bw+12} 180 -${bw-6} 30 -48 2 L48 2 C${bw-6} 30 ${bw+12} 180 ${bw} 310 Z" fill="${o.top}"/><rect x="-${bw-2}" y="296" width="${2*bw-4}" height="18" rx="6" fill="#3A2414"/>
+   ${o.style==='vest'?`<path d="M-${bw} 300 C-${bw+10} 180 -${bw-6} 30 -52 2 L-22 2 L-8 300 Z M${bw} 300 C${bw+10} 180 ${bw-6} 30 52 2 L22 2 L8 300 Z" fill="${o.vest}"/><circle cx="-14" cy="140" r="5" fill="#E7C06A"/><circle cx="-12" cy="200" r="5" fill="#E7C06A"/><path d="M-30 30 Q0 70 30 30" fill="none" stroke="#E7C06A" stroke-width="4"/>`:`<path d="M-30 2 L0 40 L30 2" fill="none" stroke="rgba(0,0,0,.18)" stroke-width="5"/><path d="M0 40 V300" stroke="rgba(0,0,0,.14)" stroke-width="4"/>`}`;}
+ const eye=(x,s)=>`<clipPath id="${id}_ec${s}"><ellipse cx="${x}" cy="-18" rx="16" ry="17"/></clipPath><g clip-path="url(#${id}_ec${s})"><ellipse cx="${x}" cy="-18" rx="16" ry="17" fill="#fff"/><g class="pup"><circle cx="${x}" cy="-17" r="8.5" fill="#2A160A"/><circle cx="${x-3}" cy="-20" r="2.8" fill="#fff"/></g><rect id="${id}_lid${s}" x="${x-20}" y="-74" width="40" height="38" fill="${sk}"/><rect id="${id}_lidb${s}" x="${x-20}" y="0" width="40" height="30" fill="${sk}"/></g>`;
+ return `<g id="${id}">
+ <ellipse cx="0" cy="${o.style==='robe'?(o.len||500)+16:520}" rx="140" ry="20" fill="#000" opacity=".2"/>
+ <g id="${id}_b">${body}${arm('R',-(bw-12))}${arm('L',bw-12)}
+ <rect x="-24" y="-30" width="48" height="44" rx="14" fill="${sd}"/>
+ <g id="${id}_head" transform="translate(0 -96)"><g id="${id}_hr">
+  <ellipse cx="-78" cy="4" rx="14" ry="20" fill="${sd}"/><ellipse cx="78" cy="4" rx="14" ry="20" fill="${sd}"/>
+  <path d="M-74 -30 C-74 -100 74 -100 74 -30 L70 38 C66 84 30 100 0 100 C-30 100 -66 84 -70 38 Z" fill="${sk}"/>
+  <path id="${id}_red" d="M-74 -30 C-74 -100 74 -100 74 -30 L70 38 C66 84 30 100 0 100 C-30 100 -66 84 -70 38 Z" fill="#E0301E" opacity="0"/>
+  ${o.hairSvg}
+  <ellipse cx="-48" cy="18" rx="15" ry="9" fill="#E8735A" opacity=".28"/><ellipse cx="48" cy="18" rx="15" ry="9" fill="#E8735A" opacity=".28"/>
+  ${eye(-30,'R')}${eye(30,'L')}
+  <g id="${id}_bR" transform="translate(-30 -46)"><rect x="-19" y="-${o.brow||5}" width="38" height="${(o.brow||5)*2}" rx="5" fill="${hc}"/></g>
+  <g id="${id}_bL" transform="translate(30 -46)"><rect x="-19" y="-${o.brow||5}" width="38" height="${(o.brow||5)*2}" rx="5" fill="${hc}"/></g>
+  <path d="M-7 -8 C-13 12 -10 20 0 22 C10 20 13 12 7 -8" fill="none" stroke="${sd}" stroke-width="5" stroke-linecap="round"/>
+  <g id="${id}_m" transform="translate(0 ${o.mouthY||62})">
+   <g id="${id}_mT"><ellipse id="${id}_mTe" rx="19" ry="8" fill="#4A0F18"/><rect id="${id}_mTt" x="-13" y="-9" width="26" height="6" rx="2" fill="#fff"/><ellipse id="${id}_mTg" cy="8" rx="10" ry="5" fill="#C8505A"/></g>
+   <path id="${id}_mS" d="M-22 -4 Q0 14 22 -4" fill="none" stroke="#4A0F18" stroke-width="6" stroke-linecap="round"/>
+   <path id="${id}_mF" d="M-20 8 Q0 -8 20 8" fill="none" stroke="#4A0F18" stroke-width="6" stroke-linecap="round"/>
+   <path id="${id}_mK" d="M-18 2 Q6 10 24 -8" fill="none" stroke="#4A0F18" stroke-width="6" stroke-linecap="round"/>
+   <g id="${id}_mG"><path d="M-26 -6 Q0 30 26 -6 Z" fill="#fff" stroke="#4A0F18" stroke-width="5" stroke-linejoin="round"/><path d="M-20 2 H20" stroke="#D8C8B8" stroke-width="2"/></g>
+  </g>
+  ${o.faceSvg||''}
+ </g></g></g></g>`;}
+// pose state
+function pose(id,s){
+ const g=s.gaze||[0,0];document.querySelectorAll(`#${id}_head .pup`).forEach(e=>e.setAttribute('transform',`translate(${g[0]} ${g[1]})`));
+ const lid=s.eyes==='c'?1:(s.lid||0), wide=s.eyes==='w'?1:0;
+ ['R','L'].forEach(k=>{$(id+'_lid'+k).setAttribute('transform',`translate(0 ${(lid*40-(wide*6)).toFixed(1)})`);$(id+'_lidb'+k).setAttribute('transform',`translate(0 ${(-(s.squint||0)*12).toFixed(1)})`);});
+ const bu=s.browY||0;$(id+'_bR').setAttribute('transform',`translate(-30 ${-46-bu}) rotate(${s.browR!==undefined?s.browR:(s.brow||0)})`);$(id+'_bL').setAttribute('transform',`translate(30 ${-46-bu}) rotate(${s.browL!==undefined?s.browL:-(s.brow||0)})`);
+ const tk=s.talk||0;const m=tk>0.05?'T':({smile:'S',frown:'F',smirk:'K',grin:'G',o:'T'}[s.mouth||'smile']);
+ ['T','S','F','K','G'].forEach(k=>O(id+'_m'+k,k===m?1:0));
+ if(m==='T'){const big=s.shout?1.5:1;const open=s.mouth==='o'&&tk<=0.05?(s.oSize||14):(5+tk*24*big);$(id+'_mTe').setAttribute('ry',open.toFixed(1));$(id+'_mTe').setAttribute('rx',((s.shout?24:18)+tk*6).toFixed(1));O(id+'_mTt',open>11?1:0);O(id+'_mTg',open>14?1:0);$(id+'_mTt').setAttribute('y',(-open+2).toFixed(1));$(id+'_mTg').setAttribute('cy',(open*0.5).toFixed(1));}
+ const aR=s.aR||[0,0],aL=s.aL||[0,0];
+ $(id+'_aRu').setAttribute('transform',`rotate(${aR[0]})`);$(id+'_aRf').setAttribute('transform',`translate(0 100) rotate(${aR[1]})`);
+ $(id+'_aLu').setAttribute('transform',`rotate(${aL[0]})`);$(id+'_aLf').setAttribute('transform',`translate(0 100) rotate(${aL[1]})`);
+ $(id+'_hr').setAttribute('transform',`translate(${s.hx||0} ${s.hy||0}) rotate(${s.head||0})`);
+ $(id+'_b').setAttribute('transform',`rotate(${s.lean||0}) scale(${1+(s.sq||0)*0.04} ${1-(s.sq||0)*0.04})`);
+ O(id+'_red',s.red||0);
+}
+const blink=(t,seed=0)=>{const c=(t*0.37+seed*0.61)%1;return c<0.035?1:0};
+// --- the cast
+const HAS={style:'robe',skin:'#C98F62',skinD:'#B07A50',hair:'#4A4038',top:'#D9DEE6',sleeve:'#D9DEE6',stripe:'#6B7F99',belly:122,brow:6,mouthY:66,
+ hairSvg:`<path d="M-80 -24 C-84 -6 -80 14 -74 26 L-70 -30 Z M80 -24 C84 -6 80 14 74 26 L70 -30 Z" fill="#7A7068"/><path d="M-78 -34 C-80 -112 80 -112 78 -34 C40 -52 -40 -52 -78 -34 Z" fill="#FBF7EE" stroke="#D8D0C0" stroke-width="3"/><path d="M-76 -40 C-40 -56 40 -56 76 -40" fill="none" stroke="#D8D0C0" stroke-width="3"/>`,
+ faceSvg:`<path d="M-48 46 C-34 26 -10 30 0 40 C10 30 34 26 48 46 C34 58 12 54 0 50 C-12 54 -34 58 -48 46 Z" fill="#4A4038"/>`};
+const HASB={...HAS,len:372};
+const CUS={style:'shirt',skin:'#E0AE82',skinD:'#C99468',hair:'#2B1C12',top:'#5BA4E0',sleeve:'#5BA4E0',pants:'#3A465C',short:1,brow:4,
+ hairSvg:`<path d="M-80 -22 C-90 -112 90 -112 80 -22 C66 -62 30 -76 -10 -70 C-40 -70 -66 -56 -80 -22 Z" fill="#2B1C12"/>`,
+ faceSvg:`<g fill="none" stroke="#2A2A30" stroke-width="5"><circle cx="-30" cy="-18" r="22"/><circle cx="30" cy="-18" r="22"/><path d="M-8 -18 H8 M-52 -20 L-74 -26 M52 -20 L74 -26"/></g>`};
+const MER={style:'vest',skin:'#B97A4F',skinD:'#9E6540',hair:'#17110C',top:'#F2E6CC',sleeve:'#F2E6CC',vest:'#2F6B4A',pants:'#2E2A26',brow:5,mouthY:64,
+ hairSvg:`<path d="M-80 -18 C-92 -116 92 -116 80 -18 C70 -66 20 -84 -30 -78 C-56 -74 -72 -52 -80 -18 Z" fill="#17110C"/><path d="M-40 -84 C0 -96 40 -90 62 -70" fill="none" stroke="#5A5048" stroke-width="5" stroke-linecap="round" opacity=".7"/>`,
+ faceSvg:`<path d="M-34 44 C-20 34 -6 38 0 42 C6 38 20 34 34 44 C20 48 8 46 0 46 C-8 46 -20 48 -34 44 Z" fill="#17110C"/><path d="M-12 84 Q0 98 12 84 Q0 90 -12 84 Z" fill="#17110C"/>`};
+
+// ================= props =================
+const mango=(x,y,r=30,rot=-20,rotten=0,sp=0)=>{const d=`M${-1.25*r} ${0.1*r} C${-1.3*r} ${-0.8*r} ${0.1*r} ${-1.08*r} ${0.85*r} ${-0.62*r} C${1.5*r} ${-0.22*r} ${1.4*r} ${0.62*r} ${0.62*r} ${0.86*r} C${-0.3*r} ${1.12*r} ${-1.2*r} ${0.82*r} ${-1.25*r} ${0.1*r} Z`;
+ return `<g transform="translate(${x} ${y}) rotate(${rot})"><path d="${d}" fill="url(#${rotten?'gRot':'gMango'})" stroke="${rotten?'#33261A':'#C8781E'}" stroke-width="2.5"/>${rotten?`<circle cx="${-r*.4}" cy="${-r*.2}" r="${r*.22}" fill="#2A1E12" opacity=".8"/><circle cx="${r*.35}" cy="${r*.25}" r="${r*.3}" fill="#2A1E12" opacity=".7"/><circle cx="${r*.6}" cy="${-r*.3}" r="${r*.12}" fill="#B8C080" opacity=".6"/>`:`<path d="M${-0.9*r} ${0.2*r} C${-0.9*r} ${-0.5*r} ${-0.2*r} ${-0.8*r} ${0.3*r} ${-0.7*r}" fill="none" stroke="#fff" stroke-width="${r*.16}" stroke-linecap="round" opacity=".45"/><ellipse cx="${0.75*r}" cy="${0.25*r}" rx="${r*.5}" ry="${r*.42}" fill="#E8452E" opacity=".45"/>`}<path d="M${-1.22*r} ${0.05*r} q${-0.28*r} ${-0.2*r} ${-0.2*r} ${-0.5*r}" stroke="#4A6A2A" stroke-width="${Math.max(3,r*.12)}" fill="none" stroke-linecap="round"/></g>`;};
+const orange=(x,y,r=28,rotten=0)=>`<g transform="translate(${x} ${y})"><circle r="${r}" fill="${rotten?'url(#gRot)':'url(#gOrange)'}" stroke="${rotten?'#33261A':'#C8600E'}" stroke-width="2.5"/>${rotten?`<circle cx="${-r*.3}" cy="${r*.1}" r="${r*.38}" fill="#DDE6C8" opacity=".55"/><circle cx="${r*.35}" cy="${-r*.3}" r="${r*.22}" fill="#2A1E12" opacity=".75"/>`:`<circle cx="${-r*.35}" cy="${-r*.38}" r="${r*.26}" fill="#fff" opacity=".4"/><circle cx="${r*.1}" cy="${-r*.82}" r="3" fill="#4A7A2A"/>`}</g>`;
+const apple=(x,y,r=24)=>`<g transform="translate(${x} ${y})"><circle r="${r}" fill="url(#gApple)" stroke="#8E1620" stroke-width="2.5"/><circle cx="${-r*.35}" cy="${-r*.38}" r="${r*.25}" fill="#fff" opacity=".4"/><path d="M0 ${-r} q4 -12 12 -14" stroke="#5A3A1A" stroke-width="4" fill="none"/></g>`;
+function pile(kind,cx,base,rows,r,seed=1){const rd=rng(seed);let s='';for(let row=0;row<rows;row++){const n=rows-row;for(let i=0;i<n;i++){const x=cx+(i-(n-1)/2)*r*(kind==='mango'?2.3:2.02)+(rd()-.5)*5,y=base-r-row*r*1.66;s+=kind==='mango'?mango(x,y,r,-25+rd()*50):kind==='orange'?orange(x,y,r):apple(x,y,r);}}return s;}
+const crate=(x,y,w,h,c='#B9773F')=>`<g transform="translate(${x} ${y})"><rect x="${-w/2}" y="${-h}" width="${w}" height="${h}" rx="5" fill="${c}" stroke="#6E4420" stroke-width="3"/>${[...Array(Math.max(2,Math.round(h/34)))].map((_,i,a)=>`<rect x="${-w/2}" y="${-h+ (i+0.5)*h/a.length-2}" width="${w}" height="4" fill="#6E4420" opacity=".55"/>`).join('')}<rect x="${-w/2+8}" y="${-h}" width="10" height="${h}" fill="#6E4420" opacity=".4"/><rect x="${w/2-18}" y="${-h}" width="10" height="${h}" fill="#6E4420" opacity=".4"/></g>`;
+function awning(x,y,w,h,c1,c2,n=9){const sw=w/n;let s=`<g transform="translate(${x} ${y})">`;for(let i=0;i<n;i++){s+=`<path d="M${i*sw} 0 H${(i+1)*sw} V${h} A${sw/2} ${sw/2} 0 0 1 ${i*sw} ${h} Z" fill="${i%2?c2:c1}"/>`;}return s+`<rect x="0" y="-14" width="${w}" height="18" rx="6" fill="#6E4420"/><rect x="0" y="0" width="${w}" height="${h}" fill="#000" opacity=".06"/></g>`;}
+function bulbs(id,x1,y1,x2,y2,n,sag=40){let s=`<path d="M${x1} ${y1} Q${(x1+x2)/2} ${(y1+y2)/2+sag*2} ${x2} ${y2}" fill="none" stroke="#3A2414" stroke-width="3"/>`;for(let i=1;i<n;i++){const k=i/n,x=lerp(x1,x2,k),y=lerp(y1,y2,k)+sag*4*k*(1-k);s+=`<g class="bulb" data-i="${i}" transform="translate(${x.toFixed(0)} ${(y+10).toFixed(0)})"><circle r="34" fill="url(#rBulb)"/><circle r="8" fill="#FFF3C0"/></g>`;}return `<g id="${id}">${s}</g>`;}
+function building(x,y,w,h,c,rows,cols,seed){const rd=rng(seed);let s=`<g transform="translate(${x} ${y})"><rect width="${w}" height="${h}" fill="${c}"/><rect width="${w}" height="14" fill="#000" opacity=".12"/>`;const cw=w/cols,rh=(h-40)/rows;for(let r=0;r<rows;r++)for(let k=0;k<cols;k++){const lit=rd()>.72;const wx=k*cw+cw*.22,wy=30+r*rh;s+=`<rect x="${wx.toFixed(0)}" y="${wy.toFixed(0)}" width="${(cw*.56).toFixed(0)}" height="${(rh*.56).toFixed(0)}" rx="${rd()>.5?cw*.28:4}" fill="${lit?'#FFD98A':'#6B4A36'}" opacity="${lit?.9:.55}"/>`;if(rd()>.8)s+=`<rect x="${(wx-6).toFixed(0)}" y="${(wy+rh*.56).toFixed(0)}" width="${(cw*.56+12).toFixed(0)}" height="8" fill="#5A3A26"/>`;}return s+'</g>';}
+// dial scale (centre of dial at 0,0)
+function dialScale(id,max=10,step=1){let ticks='';for(let v=0;v<max;v+=step/2){const an=v/max*360;ticks+=`<rect x="-2" y="-98" width="4" height="${v%step?10:20}" fill="#3A2414" transform="rotate(${an})"/>`;}let nums='';for(let v=0;v<max;v+=step){const an=v/max*2*Math.PI;nums+=`<text x="${(Math.sin(an)*66).toFixed(1)}" y="${(-Math.cos(an)*66+12).toFixed(1)}" text-anchor="middle" font-family="Reem Kufi" font-size="${max>12?26:32}" fill="#3A2414">${ar(v)}</text>`;}
+ return `<g id="${id}"><path d="M-170 250 L-140 -150 L140 -150 L170 250 Z" fill="url(#gScale)" stroke="#184E47" stroke-width="5"/><rect x="-190" y="240" width="380" height="30" rx="12" fill="#184E47"/>
+ <rect x="-22" y="-230" width="44" height="90" fill="#8FA6A2" stroke="#5A7672" stroke-width="4"/>
+ <g id="${id}_pan"><ellipse cx="0" cy="-236" rx="230" ry="26" fill="#C9D4D2" stroke="#7E9692" stroke-width="5"/><path d="M-230 -236 Q0 -170 230 -236" fill="#AEBDBA" stroke="#7E9692" stroke-width="5"/><g id="${id}_load"></g></g>
+ <circle r="118" fill="#FFF8E6" stroke="#184E47" stroke-width="10"/><circle r="104" fill="none" stroke="#C9B48A" stroke-width="2"/>${ticks}${nums}
+ <text y="52" text-anchor="middle" font-family="Reem Kufi" font-size="22" fill="#8A6A3A">كجم</text>
+ <g id="${id}_n"><path d="M-5 14 L0 -96 L5 14 Z" fill="#C8102E"/></g><circle r="11" fill="#3A2414"/><circle r="4" fill="#E7C06A"/></g>`;}
+const setDial=(id,v,max)=>$(id+'_n').setAttribute('transform',`rotate(${(v/max*360).toFixed(2)})`);
+const fly=(id,n)=>[...Array(n)].map((_,i)=>`<g id="${id}${i}"><ellipse rx="5" ry="3.4" fill="#1A1A1A"/><ellipse cx="-3" cy="-4" rx="5" ry="2.4" fill="#fff" opacity=".6"/><ellipse cx="3" cy="-4" rx="5" ry="2.4" fill="#fff" opacity=".6"/></g>`).join('');
+function updFlies(id,n,t,cx,cy,o=1){for(let i=0;i<n;i++){const a1=t*(2.2+i*.37)+i*2.1,a2=t*(3.1+i*.21)+i;T(id+i,cx+Math.cos(a1)*(60+i*22)+Math.sin(a2*1.7)*18,cy+Math.sin(a1*1.3)*(34+i*10)+Math.cos(a2)*12,1.4,Math.sin(a2*3)*30,o);}}
+
+// ================= sets =================
+function soukSet(p){return `
+ <g id="${p}_L0"><rect x="-600" y="-400" width="4200" height="1900" fill="url(#gSkyD)"/><g id="${p}_sun"><circle r="420" fill="url(#rSun)"/><circle r="70" fill="#FFF6DC"/></g>
+   ${[[300,210,1],[1250,150,.8],[2100,240,1.1]].map(([x,y,s],i)=>`<g id="${p}_cl${i}" transform="translate(${x} ${y}) scale(${s})" opacity=".75"><ellipse rx="150" ry="34" fill="#FFF3DE"/><ellipse cx="60" cy="-22" rx="90" ry="34" fill="#FFF3DE"/><ellipse cx="-70" cy="-12" rx="70" ry="28" fill="#FFF3DE"/></g>`).join('')}</g>
+ <g id="${p}_L1">${building(-200,300,330,560,'#D9A777',5,4,3)}${building(140,200,300,660,'#C9966A',6,4,5)}${building(450,330,380,530,'#E0B48A',4,5,7)}${building(840,240,300,620,'#CFA070',6,4,9)}
+   <g transform="translate(1210 0)" fill="#C08E62"><rect x="-26" y="150" width="52" height="700"/><rect x="-40" y="330" width="80" height="16"/><rect x="-36" y="210" width="72" height="14"/><path d="M-28 150 Q0 80 28 150 Z"/><rect x="-3" y="60" width="6" height="40"/><circle cy="54" r="8"/></g>
+   <g transform="translate(1420 0)" fill="#C9966A"><path d="M-170 860 V470 C-170 380 -90 330 0 310 C90 330 170 380 170 470 V860 Z"/><rect x="-4" y="262" width="8" height="52"/><circle cy="256" r="9"/></g>
+   ${building(1620,280,340,580,'#D9A777',5,4,11)}${building(1970,190,320,670,'#C9966A',6,4,13)}${building(2300,320,400,540,'#E0B48A',4,5,15)}${building(2710,250,330,610,'#CFA070',5,4,17)}
+   <path d="M150 300 Q420 380 840 330" stroke="#5A3A26" stroke-width="2" fill="none"/>${[230,330,430,530,640,740].map((x,i)=>`<rect x="${x}" y="${318+Math.sin(i)*14+ (i%3)*6}" width="46" height="${50+i%2*18}" fill="${['#E8E0D0','#C8483A','#4A7AA8','#E8C860','#E8E0D0','#7AA86A'][i]}" opacity=".9"/>`).join('')}
+   <rect x="-600" y="-400" width="4200" height="1900" fill="#FFD9A6" opacity=".28"/></g>
+ <g id="${p}_L2"><rect x="-600" y="800" width="4200" height="700" fill="#B58A62"/>
+   ${[[250,'#C8483A','#F6EAD8'],[760,'#3E8E7A','#F6EAD8'],[2020,'#D8902A','#F6EAD8'],[2520,'#4A7AA8','#F6EAD8']].map(([x,c1,c2],i)=>`<g transform="translate(${x} 0)"><rect x="-190" y="470" width="14" height="360" fill="#6E4420"/><rect x="176" y="470" width="14" height="360" fill="#6E4420"/>${awning(-210,430,420,60,c1,c2,7)}<rect x="-190" y="690" width="380" height="140" fill="#9A6234"/>${pile(i%2?'orange':'apple',-80,690,3,24,i+3)}${pile(i%2?'apple':'orange',90,690,3,24,i+9)}</g>`).join('')}
+   <g id="${p}_crowd">${[...Array(9)].map((_,i)=>`<g id="${p}_cw${i}" opacity=".5"><path d="M-34 220 C-38 90 -26 40 0 40 C26 40 38 90 34 220 Z" fill="${['#5A4638','#6B5446','#4A3C34','#7A5E48'][i%4]}"/><circle r="30" fill="${['#5A4638','#6B5446','#4A3C34','#7A5E48'][i%4]}"/></g>`).join('')}</g>
+   <rect x="-600" y="-400" width="4200" height="1900" fill="#FFCF94" opacity=".2"/></g>
+ <g id="${p}_L3"><rect x="-600" y="820" width="4200" height="700" fill="url(#gGround)"/>${[...Array(26)].map((_,i)=>`<rect x="${-560+i*160}" y="${850+(i%3)*58}" width="120" height="5" rx="2" fill="#7A5638" opacity=".35"/>`).join('')}
+   <ellipse cx="1400" cy="880" rx="560" ry="40" fill="#000" opacity=".2"/>
+   <!-- Hassan's stall -->
+   <rect x="1050" y="150" width="700" height="80" rx="10" fill="#1F5F56" stroke="#F2B544" stroke-width="6"/><text x="1400" y="208" text-anchor="middle" class="sign" font-size="62" fill="#FFE9B0">فاكهة عم حسن</text>
+   <rect x="1052" y="230" width="22" height="620" fill="#6E4420"/><rect x="1726" y="230" width="22" height="620" fill="#6E4420"/>
+   <rect x="1074" y="300" width="652" height="350" fill="#5A3A22"/>${[0,1,2].map(i=>`<rect x="1074" y="${360+i*100}" width="652" height="12" fill="#3A2414"/>`).join('')}
+   ${crate(1180,460,150,84)}${crate(1630,460,150,84)}${pile('apple',1180,376,2,20,21)}${pile('orange',1630,376,2,20,22)}${crate(1150,560,130,84,'#A8693A')}${crate(1650,560,130,84,'#A8693A')}
+   ${awning(1030,232,740,64,'#E8862E','#FFF1D8',11)}
+   <g id="${p}_ban" transform="translate(1690 300)"><path d="M0 0 V26" stroke="#3A2414" stroke-width="4"/>${[-28,-10,8,26].map((r,i)=>`<path d="M0 26 Q${r*1.6} 70 ${r*1.1} 118 Q${r*0.5} 76 0 26 Z" fill="#F6D24A" stroke="#C89A1E" stroke-width="3"/>`).join('')}</g>
+   <g id="${p}_hSlot"></g>
+   <rect x="1040" y="640" width="720" height="26" rx="8" fill="#C98A4E" stroke="#6E4420" stroke-width="3"/><rect x="1056" y="666" width="688" height="196" fill="url(#gWood)" stroke="#6E4420" stroke-width="3"/>${[0,1,2,3,4,5,6].map(i=>`<rect x="${1056+i*98}" y="666" width="6" height="196" fill="#6E4420" opacity=".5"/>`).join('')}
+   <g id="${p}_mangoPile">${pile('mango',1175,640,4,24,31)}</g>${pile('orange',1300,640,2,21,33)}
+   <g transform="translate(1175 760)"><rect x="-74" y="-30" width="148" height="60" rx="8" fill="#FFF7E0" stroke="#3A2414" stroke-width="3" transform="rotate(-3)"/><text y="14" text-anchor="middle" class="sign" font-size="36" fill="#C8102E">مانجة عسل</text></g>
+   <g id="${p}_scale" transform="translate(1590 546) scale(.36)">${dialScale(p+'_ds',10,1)}</g>
+   <g id="${p}_glint" transform="translate(1590 500)" opacity="0"><use href="#spark" fill="#FFE27A" filter="url(#glow)"/></g>
+   <g id="${p}_rotBox" opacity="0">${crate(0,0,170,96,'#8E6A40')}${[[-46,-104],[4,-108],[50,-102]].map(([x,y],i)=>mango(x,y,24,i*30-20,1)).join('')}<g transform="translate(0 -40) rotate(-4)"><rect x="-78" y="-26" width="156" height="52" rx="6" fill="#FFF7E0" stroke="#3A2414" stroke-width="3"/><text y="-2" text-anchor="middle" class="sign" font-size="24" fill="#3A2414">درجة تانية</text><text y="22" text-anchor="middle" class="sign" font-size="22" fill="#C8102E">بنص التمن</text></g></g>
+   ${[[1010,838,58],[1090,850,48]].map(([x,y,r])=>`<g transform="translate(${x} ${y})"><ellipse rx="${r*1.25}" ry="${r}" fill="#2E7A3A" stroke="#1C5226" stroke-width="4"/>${[-.6,-.2,.2,.6].map(k=>`<path d="M${r*1.25*k} ${-r*Math.sqrt(1-k*k)} Q${r*1.25*k*1.15} 0 ${r*1.25*k} ${r*Math.sqrt(1-k*k)}" stroke="#7CC46A" stroke-width="5" fill="none" opacity=".7"/>`).join('')}</g>`).join('')}
+   <g id="${p}_cSlot"></g>
+ </g>
+ <g id="${p}_L4">${crate(420,1120,330,200,'#8A5328')}${crate(2380,1130,360,220,'#8A5328')}<g transform="translate(420 920)">${pile('orange',0,0,3,34,41)}</g>
+   <g id="${p}_cat" transform="translate(2330 908)"><ellipse cx="0" cy="0" rx="74" ry="34" fill="#E8A860"/><circle cx="-62" cy="-18" r="28" fill="#E8A860"/><path d="M-84 -34 L-78 -58 L-66 -40 Z M-58 -42 L-46 -62 L-42 -36 Z" fill="#E8A860"/><path d="M-72 -18 q5 5 10 0 M-58 -18 q5 5 10 0" stroke="#3A2414" stroke-width="3" fill="none"/><path id="${p}_tail" d="M70 0 Q120 -10 116 -50" stroke="#E8A860" stroke-width="16" fill="none" stroke-linecap="round"/></g>
+   ${bulbs(p+'_bl',-200,60,3000,90,22,26)}</g>`;}
+function setCam(p,cx,cy,z,sh=0){[['_L0',.12],['_L1',.4],['_L2',.72],['_L3',1],['_L4',1.22]].forEach(([l,k])=>{const x=cx*k+(1-k)*1400,y=cy*k+(1-k)*540;const zz=1+(z-1)*(0.35+0.65*k);$(p+l).setAttribute('transform',`translate(${(960+sh).toFixed(1)} 540) scale(${zz.toFixed(4)}) translate(${(-x).toFixed(1)} ${(-y).toFixed(1)})`);});}
+function soukAmb(p,t,mood=0){ // mood 0 golden hour, 1 dusk, 2 sunrise
+  T(p+'_sun',mood===2?700:2050,mood===1?700:(mood===2?520:330),1,0);
+  for(let i=0;i<3;i++){const base=[300,1250,2100][i];$(p+'_cl'+i).setAttribute('transform',`translate(${((base+t*9)%3400)-300} ${[210,150,240][i]}) scale(${[1,.8,1.1][i]})`);}
+  for(let i=0;i<9;i++){const dir=i%2?1:-1,sp=40+i*9;const x=(((i*417+t*sp*dir)%3400)+3400)%3400-300;T(p+'_cw'+i,x,640+Math.abs(Math.sin(t*5+i))*-8+(i%3)*14,0.9+(i%3)*.12,0);}
+  document.querySelectorAll(`#${p}_bl .bulb`).forEach(b=>{const i=+b.dataset.i;b.setAttribute('opacity',((mood===1?0.95:0.55)+0.15*Math.sin(t*3+i*1.7)).toFixed(2));});
+  $(p+'_tail').setAttribute('d',`M70 0 Q120 -10 ${(116+Math.sin(t*2)*16).toFixed(0)} ${(-50+Math.cos(t*2)*8).toFixed(0)}`);
+  $(p+'_ban').setAttribute('transform',`translate(1690 300) rotate(${(Math.sin(t*1.4)*3).toFixed(2)})`);
+}
+function wholesaleSet(p){return `
+ <rect x="-300" y="-300" width="2520" height="1700" fill="#E9C79A"/><rect x="-300" y="-300" width="2520" height="700" fill="url(#gSkyD)" opacity=".8"/>
+ <g id="${p}_bg"><rect x="-200" y="120" width="2320" height="720" fill="#B88A5C"/><rect x="-200" y="120" width="2320" height="40" fill="#8A5E3A"/>
+  <rect x="560" y="40" width="800" height="96" rx="12" fill="#2F6B4A" stroke="#F2B544" stroke-width="6"/><text x="960" y="108" text-anchor="middle" class="sign" font-size="70" fill="#FFE9B0">وكالة الجملة</text>
+  <rect x="640" y="200" width="640" height="640" fill="#3A2A1E"/><rect x="640" y="200" width="640" height="640" fill="#000" opacity=".25"/>
+  ${[...Array(5)].map((_,r)=>[...Array(4)].map((_,c)=>crate(110+c*128+(r%2)*20,830-r*92,122,88,r%2?'#A8693A':'#B9773F')).join('')).join('')}
+  ${[...Array(5)].map((_,r)=>[...Array(4)].map((_,c)=>crate(1420+c*128-(r%2)*20,830-r*92,122,88,r%2?'#B9773F':'#A8693A')).join('')).join('')}
+  ${[...Array(3)].map((_,r)=>[...Array(3)].map((_,c)=>crate(790+c*130,830-r*92,124,88,'#7E5230')).join('')).join('')}
+  <rect x="-300" y="-300" width="2520" height="1700" fill="#3A2412" opacity=".22"/></g>
+ <rect x="-300" y="830" width="2520" height="600" fill="url(#gGround)"/>${[...Array(16)].map((_,i)=>`<rect x="${-200+i*150}" y="${870+(i%3)*60}" width="110" height="5" rx="2" fill="#7A5638" opacity=".35"/>`).join('')}
+ <g id="${p}_fs" transform="translate(960 830)"><rect x="-210" y="-26" width="420" height="34" rx="8" fill="#5A6A72" stroke="#2E3A40" stroke-width="4"/><rect x="170" y="-330" width="26" height="310" fill="#5A6A72" stroke="#2E3A40" stroke-width="4"/>
+   <g transform="translate(183 -390) scale(.52)"><circle r="118" fill="#FFF8E6" stroke="#2E3A40" stroke-width="12"/>${[...Array(25)].map((_,v)=>`<rect x="-2" y="-104" width="4" height="${v%5?10:22}" fill="#3A2414" transform="rotate(${v/25*360})"/>`).join('')}${[0,5,10,15,20].map(v=>`<text x="${(Math.sin(v/25*6.283)*70).toFixed(1)}" y="${(-Math.cos(v/25*6.283)*70+12).toFixed(1)}" text-anchor="middle" font-family="Reem Kufi" font-size="34" fill="#3A2414">${ar(v)}</text>`).join('')}<g id="${p}_fn"><path d="M-6 16 L0 -100 L6 16 Z" fill="#C8102E"/></g><circle r="12" fill="#3A2414"/></g>
+   <g id="${p}_crate">${crate(-20,-26,250,150,'#C98A4E')}${pile('orange',-20,-176,2,30,51)}<g transform="translate(-20 -100)"><rect x="-70" y="-30" width="140" height="60" rx="8" fill="#FFF7E0" stroke="#3A2414" stroke-width="3" transform="rotate(3)"/><text y="16" text-anchor="middle" class="sign" font-size="40" fill="#C8102E">٢٠ كيلو</text></g></g></g>
+ <g id="${p}_hW"></g><g id="${p}_mW"></g>
+ <g id="${p}_steam">${[0,1,2,3,4,5].map(i=>`<circle id="${p}_st${i}" r="26" fill="#fff" opacity="0"/>`).join('')}</g>`;}
+
+// ================= film scenes =================
+const SC=[];const film=$('film');
+function scene(s,e,html,update,o={}){const d=document.createElement('div');d.className='scene';d.innerHTML=html;film.appendChild(d);SC.push({s,e,el:d,update,fi:o.fi===undefined?0.45:o.fi,fo:o.fo===undefined?0.45:o.fo});}
+const bokeh=(seed,c)=>{const r=rng(seed);return `<g filter="url(#blurS)">${[...Array(16)].map(()=>`<circle cx="${(r()*1920).toFixed(0)}" cy="${(r()*1080).toFixed(0)}" r="${(60+r()*120).toFixed(0)}" fill="${c[Math.floor(r()*c.length)]}" opacity="${(.25+r()*.3).toFixed(2)}"/>`).join('')}</g>`;};
+const lens=(id)=>`<g id="${id}"><circle r="200" fill="none" stroke="#1A1008" stroke-width="22"/><circle r="200" fill="none" stroke="#F2B544" stroke-width="10"/><circle r="186" fill="none" stroke="#fff" stroke-width="3" opacity=".5"/><path d="M-150 -90 A176 176 0 0 1 -60 -164" stroke="#fff" stroke-width="10" fill="none" opacity=".35" stroke-linecap="round"/><rect x="186" y="150" width="44" height="210" rx="20" fill="#3A2414" transform="rotate(-42 208 150)"/></g>`;
+
+// ---- S1: the souk — Hassan sells (0 - 33.2), with the customer; reused camera timeline
+scene(0,a(12.35),`<svg class="full" viewBox="0 0 1920 1080">${soukSet('s1')}</svg>`,(t)=>{
+  soukAmb('s1',t,0);
+  const cx=kf(t,[[0,900],[4.0,1320],[4.6,1400],[9.9,1400],[10.5,1385],[14.2,1380]]);
+  const cy=kf(t,[[0,560],[4.0,540],[4.6,470],[9.9,470],[10.5,500],[14.2,495]]);
+  const z=kf(t,[[0,.74],[4.0,.86],[4.8,1.3],[9.9,1.38],[10.5,1.12],[14.2,1.18]]);
+  setCam('s1',cx,cy,z);
+  const tk=talk('H',t),call=t>a(8.27)&&t<a(12.1);
+  const wave=call?Math.sin(t*9)*18:0, wink=bell(t,a(7.0),0.55);
+  T('s1_H',1400,492+Math.sin(t*2)*2-(call?Math.abs(Math.sin(t*6))*8:0),0.92,0);
+  pose('s1_H',{talk:tk,mouth:t>a(3.3)?'grin':'smile',lid:Math.max(blink(t,1),0),eyes:'o',gaze:t<4.5?[-6,2]:(call?[Math.sin(t*2)*6,0]:[0,0]),brow:call?-8:(t>a(5.6)&&t<a(7.6)?10:0),browY:call?6:0,
+    browL:t>a(6.7)&&t<a(7.7)?-18:undefined,
+    aR:call?[150+wave,20]:(t>a(3.3)&&t<a(5.0)?[40,-110]:[8,-12]),aL:call?[-60,-80+Math.sin(t*5)*8]:(t>a(3.3)&&t<a(5.0)?[-40,110]:[-8,12]),head:call?Math.sin(t*5)*4:(wink*-8),squint:wink*0.6});
+  if(wink>0.3){$('s1_H_lidL').setAttribute('transform','translate(0 40)');}
+  O('s1_glint',0);
+},{fi:0});
+// ---- I1: what is under the pile (14.5 - 19.0)
+scene(a(12.35),a(17.0),`<svg class="full" viewBox="0 0 1920 1080"><rect width="1920" height="1080" fill="#C98A4E"/>${bokeh(5,['#FFD98A','#E8862E','#FFF1D8','#8A5328'])}
+ <g id="i1_pile" transform="translate(960 560)">
+  <g>${(()=>{let s='';const rd=rng(77);for(let row=0;row<6;row++){const n=3+row;for(let i=0;i<n;i++){const x=(i-(n-1)/2)*150+(rd()-.5)*10,y=-420+row*112;s+=mango(x,y,62,-25+rd()*50,row>=2);}}return s;})()}</g>
+  <g id="i1_cover"><clipPath id="i1_cc"><rect x="-720" y="-250" width="1440" height="700"/></clipPath><g clip-path="url(#i1_cc)"><rect x="-640" y="-250" width="1280" height="640" rx="14" fill="url(#gWood)" stroke="#6E4420" stroke-width="8"/>${[0,1,2,3].map(i=>`<rect x="-640" y="${-250+i*160+150}" width="1280" height="10" fill="#6E4420" opacity=".6"/>`).join('')}${[-520,-180,180,520].map(x=>`<rect x="${x-14}" y="-250" width="28" height="640" fill="#6E4420" opacity=".45"/>`).join('')}
+    <g transform="translate(0 60) rotate(-2)"><rect x="-300" y="-90" width="600" height="180" rx="16" fill="#FFF7E0" stroke="#3A2414" stroke-width="6"/><text y="28" text-anchor="middle" class="sign" font-size="120" fill="#C8102E">مانجة عسل</text></g></g></g>
+  <g id="i1_x"><clipPath id="i1_lc"><circle id="i1_lcc" r="190"/></clipPath><g clip-path="url(#i1_lc)"><rect x="-720" y="-250" width="1440" height="700" fill="#3A2414"/>${(()=>{let s='';const rd=rng(77);for(let row=0;row<6;row++){const n=3+row;for(let i=0;i<n;i++){const x=(i-(n-1)/2)*150+(rd()-.5)*10,y=-420+row*112;const rr=rd();if(row>=2)s+=mango(x,y,62,-25+rr*50,1);}}return s;})()}</g></g>
+  ${lens('i1_lens')}<g id="i1_fl">${fly('i1_f',5)}</g>
+  <g id="i1_sp">${[[-150,-440],[20,-470],[170,-430],[-60,-340],[110,-330]].map(([x,y],i)=>`<g id="i1_s${i}" transform="translate(${x} ${y})"><use href="#spark" fill="#fff" filter="url(#glow)"/></g>`).join('')}</g>
+ </g></svg>
+ <div class="tag" id="i1_t1" style="left:1240px;top:150px;background:#2F8F4E">اللي فوق: عسل ✓</div><div class="tag" id="i1_t2" style="left:220px;top:800px;background:#B3261E">اللي تحت: بايظ ✗</div>`,(t)=>{
+  const s=a(12.35);const down=E.inOut(P(t,a(14.3),1.3));
+  T('i1_pile',960,lerp(640,470,down),lerp(.92,1.0,down),0);
+  for(let i=0;i<5;i++){const k=0.5+0.5*Math.sin(t*5+i*1.3);const [x,y]=[[-150,-440],[20,-470],[170,-430],[-60,-340],[110,-330]][i];T('i1_s'+i,x,y,0.35*k*(1-down),t*40,(1-down));}
+  const kl=E.out(P(t,a(14.3),0.6));const lx=kf(t,[[a(14.3),-420],[a(15.2),-260],[a(16.2),180],[a(17.0),60]]),ly=kf(t,[[a(14.3),-60],[a(15.2),120],[a(16.2),200],[a(17.0),90]]);
+  T('i1_lens',lx,ly,kl,0,kl);$('i1_lcc').setAttribute('cx',lx);$('i1_lcc').setAttribute('cy',ly);$('i1_lcc').setAttribute('r',(190*kl).toFixed(1));
+  updFlies('i1_f',5,t,lx,ly-10,E.out(P(t,a(15.4),0.5)));
+  const k1=pop(t,a(13.0),0.45)*(1-E.in(P(t,a(14.4),0.3))),k2=pop(t,a(15.0),0.45);
+  $('i1_t1').style.transform=`scale(${Math.max(0,k1).toFixed(3)}) rotate(-3deg)`;$('i1_t1').style.opacity=clamp(k1*3);$('i1_t2').style.transform=`scale(${Math.max(0,k2).toFixed(3)}) rotate(2deg)`;$('i1_t2').style.opacity=clamp(k2*3);
+});
+// ---- A4: the customer & "my scale is gold" (19.0 - 25.4)
+scene(a(17.0),a(23.4),`<svg class="full" viewBox="0 0 1920 1080">${soukSet('s2')}</svg>`,(t)=>{
+  soukAmb('s2',t,0);const hs=a(20.49);
+  const cx=kf(t,[[a(17.0),1200],[hs-0.3,1220],[hs+0.5,1480],[a(23.4),1500]]),cy=kf(t,[[a(17.0),570],[hs-0.3,570],[hs+0.5,500],[a(23.4),495]]),z=kf(t,[[a(17.0),.98],[hs-0.3,1.02],[hs+0.5,1.36],[a(23.4),1.42]]);
+  setCam('s2',cx,cy,z);
+  const walk=E.out(P(t,a(17.0),0.9));
+  T('s2_C',lerp(560,960,walk),560+(walk<1?Math.abs(Math.sin(t*12))*-12:Math.sin(t*2)*2),1.0,0);
+  const tc=talk('C',t);
+  pose('s2_C',{talk:tc,mouth:'smile',lid:blink(t,3),gaze:[9,-3],brow:-4,browY:tc>0?4:0,aL:t>a(17.3)&&t<a(18.7)?[-50,-95+Math.sin(t*6)*8]:[-6,10],aR:t>a(18.6)&&t<a(20.2)?[20,-120]:[6,-10],head:tc>0?Math.sin(t*4)*3:2});
+  const th=talk('H',t),pat=bell(t,a(21.6),0.9),gold=t>a(22.45);
+  T('s2_H',1400,492+Math.sin(t*2)*2,0.92,0);
+  pose('s2_H',{talk:th,mouth:'grin',lid:blink(t,1),gaze:t<hs?[-9,3]:(pat>0.2?[9,6]:[-6,2]),brow:-6,browY:th>0?6:0,
+    aR:t>hs&&t<a(21.5)?[30,-125]:[8,-12],aL:pat>0.05?[-38-pat*30,-30+Math.sin(t*14)*10*pat]:(gold?[-150,-20]:[-8,12]),head:th>0?Math.sin(t*5)*3:0,hy:th>0?Math.abs(Math.sin(t*7))*-3:0});
+  const kg=bell(t,a(22.5),1.2);T('s2_glint',1590,470,kg*0.9,t*90,kg);
+});
+// ---- I2: the rigged scale (25.4 - 29.3)
+function scaleInsert(p){return `<svg class="full" viewBox="0 0 1920 1080"><rect width="1920" height="1080" fill="#B9773F"/>${bokeh(9,['#FFD98A','#E8862E','#FFF1D8','#3E9A8E'])}
+ <rect y="900" width="1920" height="180" fill="#8A5328"/><rect y="890" width="1920" height="22" fill="#C98A4E"/>
+ <g id="${p}_sc" transform="translate(760 640)">${dialScale(p+'_d',10,1)}</g>
+ <g id="${p}_bag" transform="translate(760 404)"><path d="M-120 0 C-150 -150 -90 -210 0 -210 C90 -210 150 -150 120 0 Z" fill="#F6EAD8" stroke="#C9B48A" stroke-width="5" opacity=".92"/>${[[-50,-40],[40,-46],[-6,-110],[70,-120],[-70,-126]].map(([x,y],i)=>mango(x,y,44,i*37-30)).join('')}<path d="M-40 -210 q40 -50 80 0" fill="none" stroke="#C9B48A" stroke-width="8"/></g>
+ <g id="${p}_w"><rect x="-46" y="-22" width="92" height="52" rx="8" fill="#5A6066" stroke="#2A2E32" stroke-width="5"/><text y="18" text-anchor="middle" font-family="Reem Kufi" font-size="34" fill="#E8ECEF">½ ك</text><circle id="${p}_wg" r="90" fill="#FF4A3A" opacity="0"/></g>
+ <g id="${p}_hand"><rect x="-40" y="-520" width="92" height="430" rx="44" fill="#D9DEE6"/><rect x="-34" y="-130" width="80" height="70" rx="30" fill="#C98F62"/><circle cx="6" cy="-50" r="46" fill="#C98F62"/><rect x="-34" y="-36" width="26" height="62" rx="13" fill="#C98F62"/><rect x="22" y="-36" width="26" height="66" rx="13" fill="#C98F62"/></g>
+ <g id="${p}_pie" transform="translate(1420 520)">${[0,1].map(i=>`<g id="${p}_k${i}" transform="translate(0 ${i*250-125})"><circle r="100" fill="#FFE9B0" stroke="#3A2414" stroke-width="6"/><path id="${p}_sl${i}" d="M0 0 L0 -100 A100 100 0 0 1 100 0 Z" fill="#C8102E" stroke="#3A2414" stroke-width="6"/><text x="-34" y="46" text-anchor="middle" class="sign" font-size="46" fill="#3A2414">كيلو</text></g>`).join('')}</g>
+ </svg>
+ <div class="tag" id="${p}_t1" style="left:240px;top:150px;background:#226A61">الميزان بيقول: <span id="${p}_t1v">٢</span> كيلو</div>
+ <div class="tag" id="${p}_t2" style="left:240px;top:250px;background:#B3261E">الحقيقة: <span id="${p}_t2v">١٫٥</span> كيلو</div>`;}
+scene(a(23.4),a(27.45),scaleInsert('i2'),(t)=>{
+  const s=a(23.4);const settle=E.elastic(P(t,s+0.1,1.2));setDial('i2_d',2*settle+Math.sin(t*20)*0.02,10);
+  T('i2_sc',760,640,0.95,0);T('i2_bag',760,404+ (1-E.out(P(t,s,0.5)))*-200,0.95,0);
+  // hidden weight under the pan pulses red when revealed
+  const kr=E.out(P(t,a(24.6),0.5));T('i2_w',900,455,0.9,0,1);O('i2_wg',0.35*kr*(0.5+0.5*Math.sin(t*8)));
+  O('i2_hand',0);
+  const k1=pop(t,s+0.4,0.45),k2=pop(t,a(24.7),0.45);
+  [['i2_t1',k1,-2],['i2_t2',k2,2]].forEach(([id,k,r])=>{$(id).style.transform=`scale(${Math.max(0,k).toFixed(3)}) rotate(${r}deg)`;$(id).style.opacity=clamp(k*3);});
+  for(let i=0;i<2;i++){const kk=pop(t,a(25.0)+i*0.25,0.45);T('i2_k'+i,0,i*250-125,kk,0,kk);const bite=E.out(P(t,a(26.7)+i*0.12,0.5));$('i2_sl'+i).setAttribute('transform',`translate(${(bite*70).toFixed(1)} ${(-bite*70).toFixed(1)}) rotate(${(bite*20).toFixed(1)})`);}
+});
+// ---- A5: Hassan chuckles (29.3 - 33.1)
+scene(a(27.45),a(31.1),`<svg class="full" viewBox="0 0 1920 1080">${soukSet('s3')}</svg>
+ <svg class="full" viewBox="0 0 1920 1080"><g id="s3_coins">${[0,1,2,3,4,5].map(i=>`<g id="s3_co${i}"><circle r="26" fill="url(#gBrass)" stroke="#8A6A22" stroke-width="4"/><text y="10" text-anchor="middle" font-family="Reem Kufi" font-size="26" fill="#6A4E12">ج</text></g>`).join('')}</g></svg>`,(t)=>{
+  soukAmb('s3',t,0);setCam('s3',1400,kf(t,[[a(27.45),440],[a(31.1),425]]),kf(t,[[a(27.45),1.75],[a(31.1),1.95]]));
+  const th=talk('H',t),lg=bell(t,a(27.55),1.1);
+  T('s3_H',1400,492+lg*Math.sin(t*38)*5,0.92,0);
+  pose('s3_H',{talk:th,mouth:'grin',lid:Math.max(blink(t,1),lg*0.75),gaze:[Math.sin(t*3.2)*10,2],brow:-12,browY:2,aR:[35,-118+Math.sin(t*9)*8],aL:[-35,118+Math.sin(t*9+1)*8],head:Math.sin(t*2.4)*5,squint:.4,hy:lg*Math.abs(Math.sin(t*19))*-5});
+  for(let i=0;i<6;i++){const k=P(t,a(28.7)+i*0.22,1.0);T('s3_co'+i,760+i*84,lerp(1100,520,E.out(k))+ (k>0.5?(k-.5)*900:0),1.3,k*500,k>0&&k<1?1:0);}
+});
+// ---- W1/W2: wholesale market (33.1 - 40.4)
+scene(a(31.1),a(38.3),`<svg class="full" viewBox="0 0 1920 1080"><g id="w1_cam">${wholesaleSet('w1')}</g></svg>`,(t)=>{
+  const ms=a(34.72);const cx=kf(t,[[a(31.1),900],[ms-0.3,930],[ms+0.5,1160],[a(38.3),1180]]),cy=kf(t,[[a(31.1),540],[ms-0.3,540],[ms+0.5,440],[a(38.3),435]]),z=kf(t,[[a(31.1),.92],[ms-0.3,.98],[ms+0.5,1.24],[a(38.3),1.3]]);
+  $('w1_cam').setAttribute('transform',`translate(960 540) scale(${z.toFixed(4)}) translate(${(-cx).toFixed(1)} ${(-cy).toFixed(1)})`);
+  const walk=E.out(P(t,a(31.3),1.6));T('w1_H',lerp(150,560,walk),330+(walk<1?Math.abs(Math.sin(t*11))*-12:Math.sin(t*2)*2),0.95,0);
+  pose('w1_H',{mouth:'smile',lid:blink(t,1),gaze:[10,2],aR:[6,-10],aL:t>ms?[-30,-110]:[-6,10],head:t>ms?4:0,brow:t>ms?-4:0});
+  const tm=talk('M',t),pres=t>ms&&t<a(36.5),sw=t>=a(36.4);
+  T('w1_M',1370,330+Math.sin(t*2+1)*2,0.98,0);
+  pose('w1_M',{talk:tm,mouth:'smirk',lid:Math.max(blink(t,5),0.25),gaze:[-9,2],brow:-8,browR:8,aR:pres?[70,30+Math.sin(t*5)*8]:(sw?[40,-130]:[10,-14]),aL:sw?[-150,-30+Math.sin(t*10)*10]:[-10,14],head:tm>0?Math.sin(t*4)*3:-3,lean:pres?-3:0});
+  $('w1_fn').setAttribute('transform',`rotate(${(E.elastic(P(t,a(31.6),1.4))*20/25*360).toFixed(1)})`);
+});
+// ---- I3: back home — 17, not 20, and the bottom is rotten (40.4 - 47.5)
+scene(a(38.3),a(45.5),`<svg class="full" viewBox="0 0 1920 1080"><rect width="1920" height="1080" fill="#B9773F"/>${bokeh(13,['#FFD98A','#E8862E','#FFF1D8','#5A3A22'])}
+ <rect y="930" width="1920" height="150" fill="#8A5328"/><rect y="920" width="1920" height="22" fill="#C98A4E"/>
+ <g id="i3_all">
+ <g id="i3_dial" transform="translate(1420 520) scale(1.5)"><circle r="150" fill="#FFF8E6" stroke="#184E47" stroke-width="14"/>${[...Array(25)].map((_,v)=>`<rect x="-2.5" y="-132" width="5" height="${v%5?12:26}" fill="#3A2414" transform="rotate(${v/25*360})"/>`).join('')}${[0,5,10,15,20].map(v=>`<text x="${(Math.sin(v/25*6.283)*92).toFixed(1)}" y="${(-Math.cos(v/25*6.283)*92+14).toFixed(1)}" text-anchor="middle" font-family="Reem Kufi" font-size="40" fill="#3A2414">${ar(v)}</text>`).join('')}
+   <g id="i3_ghost" opacity=".0"><path d="M-5 16 L0 -126 L5 16 Z" fill="#2F8F4E" transform="rotate(288)"/></g><g id="i3_n"><path d="M-7 18 L0 -128 L7 18 Z" fill="#C8102E"/></g><circle r="14" fill="#3A2414"/><text y="74" text-anchor="middle" font-family="Reem Kufi" font-size="26" fill="#8A6A3A">كجم</text></g>
+ <g id="i3_cr" transform="translate(600 800)">
+   <g>${(()=>{let s='';const rd=rng(91);for(let row=0;row<5;row++){for(let i=0;i<7;i++){s+=orange((i-3)*118+(rd()-.5)*12,-560+row*112,56,row>=2&&rd()>0.25);}}return s;})()}</g>
+   <g id="i3_cover"><rect x="-450" y="-420" width="900" height="420" rx="12" fill="url(#gWood)" stroke="#6E4420" stroke-width="8"/>${[0,1,2].map(i=>`<rect x="-450" y="${-420+i*140+130}" width="900" height="10" fill="#6E4420" opacity=".6"/>`).join('')}${[-380,0,380].map(x=>`<rect x="${x-14}" y="-420" width="28" height="420" fill="#6E4420" opacity=".45"/>`).join('')}</g>
+   <clipPath id="i3_lc"><circle id="i3_lcc" r="190"/></clipPath><g clip-path="url(#i3_lc)"><rect x="-450" y="-420" width="900" height="420" fill="#3A2414"/>${(()=>{let s='';const rd=rng(91);for(let row=0;row<5;row++){for(let i=0;i<7;i++){const x=(i-3)*118+(rd()-.5)*12;const rot=row>=2&&rd()>0.25;if(row>=2)s+=orange(x,-560+row*112,56,rot);}}return s;})()}</g>
+   ${lens('i3_lens')}<g>${fly('i3_f',5)}</g></g>
+ </g></svg>
+ <div class="tag" id="i3_t1" style="left:1180px;top:130px;background:#2F6B4A">التاجر قال: ٢٠ كيلو</div><div class="tag" id="i3_t2" style="left:1210px;top:850px;background:#B3261E;font-size:56px">الحقيقة: ١٧ بس!</div>`,(t)=>{
+  const s=a(38.3);const rise=E.out(P(t,a(39.4),1.6));const v=17*rise+(rise>=1?Math.sin(t*14)*0.05:0);$('i3_n').setAttribute('transform',`rotate(${(v/25*360).toFixed(2)})`);
+  O('i3_ghost',0.55*E.out(P(t,a(40.6),0.5)));
+  const sh=shake(t,a(40.67),0.5,10,70);T('i3_all',sh,0,1,0);
+  const k1=pop(t,s+0.5,0.45),k2=pop(t,a(40.7),0.45);[['i3_t1',k1,-2],['i3_t2',k2,2]].forEach(([id,k,r])=>{$(id).style.transform=`scale(${Math.max(0,k).toFixed(3)}) rotate(${r}deg)`;$(id).style.opacity=clamp(k*3);});
+  const kl=E.out(P(t,a(42.2),0.6));const lx=kf(t,[[a(42.2),-300],[a(43.4),-120],[a(44.4),200],[a(45.5),40]]),ly=kf(t,[[a(42.2),-520],[a(43.4),-190],[a(44.4),-160],[a(45.5),-210]]);
+  T('i3_lens',lx,ly,kl,0,kl);$('i3_lcc').setAttribute('cx',lx);$('i3_lcc').setAttribute('cy',ly);$('i3_lcc').setAttribute('r',(190*kl).toFixed(1));updFlies('i3_f',5,t,lx,ly,E.out(P(t,a(43.6),0.5)));
+});
+// ---- A6: fury (47.5 - 49.3)
+scene(a(45.5),a(47.3),`<svg class="full" viewBox="0 0 1920 1080">${soukSet('s4')}</svg><svg class="full" viewBox="0 0 1920 1080"><g id="s4_lines">${[...Array(28)].map((_,i)=>`<path d="M0 -420 L10 -1300 L-10 -1300 Z" fill="#fff" opacity=".5" transform="rotate(${i*12.86})"/>`).join('')}</g><g id="s4_stm">${[0,1,2,3,4,5].map(i=>`<circle id="s4_sm${i}" r="34" fill="#fff" opacity="0"/>`).join('')}</g></svg>`,(t)=>{
+  soukAmb('s4',t,0);const s=a(45.5);const sh=shake(t,a(45.77),0.6,22,75)+shake(t,a(46.44),0.6,26,75);
+  setCam('s4',1400,430,kf(t,[[s,1.6],[s+0.35,2.05],[a(47.3),2.2]]),sh);
+  const th=talk('H',t);T('s4_H',1400,492+Math.sin(t*46)*4,0.92,0);
+  pose('s4_H',{talk:Math.max(th,0.35),shout:1,mouth:'o',eyes:'w',gaze:[0,0],brow:24,browY:-6,red:0.45+0.15*Math.sin(t*9),aR:[150,40+Math.sin(t*30)*10],aL:[-150,-40+Math.sin(t*30+1)*10],head:Math.sin(t*40)*3,hy:-4});
+  T('s4_lines',960,430,1,t*30,0.5*E.out(P(t,s,0.3)));
+  for(let i=0;i<6;i++){const k=((t-s)*1.2+i/6)%1;const side=i%2?1:-1;T('s4_sm'+i,960+side*(190+k*160),330-k*260,0.5+k*1.4,0,(1-k)*0.8);}
+},{fi:0.12,fo:0.12});
+// ---- W3: the confrontation, then the freeze (49.3 - 66.2)
+scene(a(47.3),a(64.6),`<svg class="full" viewBox="0 0 1920 1080"><g id="w3_cam">${wholesaleSet('w3')}</g></svg>
+ <svg class="full" viewBox="0 0 1920 1080"><g id="w3_pause" opacity="0"><circle cx="960" cy="500" r="120" fill="rgba(0,0,0,.55)" stroke="#fff" stroke-width="8"/><rect x="915" y="440" width="30" height="120" rx="6" fill="#fff"/><rect x="975" y="440" width="30" height="120" rx="6" fill="#fff"/></g></svg>`,(t0)=>{
+  const fz=a(54.9);const t=Math.min(t0,fz);const s=a(47.3);
+  const sh=shake(t,s,0.5,16,75);
+  const cx=kf(t,[[s,930],[a(49.6),960],[a(50.0),1010],[fz,1000]]),z=kf(t,[[s,1.12],[a(49.6),1.16],[a(50.0),1.1],[fz,1.14]]);
+  $('w3_cam').setAttribute('transform',`translate(${(960+sh).toFixed(1)} 540) scale(${z.toFixed(4)}) translate(${(-cx).toFixed(1)} -450)`);
+  const th=talk('H',t),ang=t<a(49.75);
+  T('w3_H',600,330+(ang?Math.sin(t*44)*4:0),0.95,0);
+  pose('w3_H',{talk:ang?Math.max(th,0.3):0,shout:1,mouth:ang?'o':'frown',eyes:'w',gaze:[9,-2],brow:24,browY:-4,red:0.4+0.12*Math.sin(t*9),aL:[-100,-60+Math.sin(t*26)*14],aR:ang?[20,-140+Math.sin(t*26)*8]:[30,-120],head:ang?Math.sin(t*36)*3:6,lean:6});
+  const tm=talk('M',t),shr=bell(t,a(50.9),1.6),last=t>a(52.5);
+  T('w3_M',1370,330+Math.sin(t*2)*2-shr*8,0.98,0);
+  pose('w3_M',{talk:tm,mouth:'smirk',lid:Math.max(blink(t,5),0.3),gaze:[-9,2],browR:-14,browL:6,browY:shr*6,aR:[30+shr*50,-120+shr*40],aL:[-30-shr*50,120-shr*40],head:last?-8:Math.sin(t*3)*2,lean:-2});
+  $('w3_fn').setAttribute('transform',`rotate(${(20/25*360).toFixed(1)})`);
+  for(let i=0;i<6;i++){const k=((t-s)*1.1+i/6)%1;const side=i%2?1:-1;T('w3_st'+i,600+side*(100+k*110),170-k*190,0.5+k*1.2,0,(1-k)*0.7*(ang?1:0.4));}
+  const kp=pop(t0,fz+0.05,0.4)*(1-E.sine(P(t0,a(55.9),0.5)));T('w3_pause',0,0,1,0,kp);$('w3_pause').setAttribute('transform',`translate(${960*(1-kp)} ${500*(1-kp)}) scale(${Math.max(.01,kp)})`);
+},{fi:0.12,fo:1.2});
+
+// ---- ending film scenes
+// E1: the walk home at dusk
+scene(b(38.4),b(41.0),`<svg class="full" viewBox="0 0 1920 1080">${soukSet('e1')}<rect width="1920" height="1080" fill="#2A1E5A" opacity=".5" style="mix-blend-mode:multiply"/><rect width="1920" height="1080" fill="#FF9A4A" opacity=".12"/></svg>`,(t)=>{
+  soukAmb('e1',t,1);const s=b(38.4);const x=lerp(2100,1500,P(t,s,2.8));setCam('e1',x-140,520,1.25);
+  T('e1_H',x,560+Math.abs(Math.sin(t*7))*-9,0.92,Math.sin(t*7)*1.5);
+  pose('e1_H',{mouth:'frown',lid:0.5,gaze:[-4,10],brow:14,browY:-2,aR:[Math.sin(t*7)*22,-8],aL:[-Math.sin(t*7)*22,8],head:10,hy:6});
+});
+// E2: "was I doing this to people every day?"
+scene(b(41.0),b(44.95),`<svg class="full" viewBox="0 0 1920 1080">${soukSet('e2')}<rect width="1920" height="1080" fill="#241A52" opacity=".55" style="mix-blend-mode:multiply"/><circle cx="960" cy="420" r="520" fill="url(#rBulb)" opacity=".28"/></svg>`,(t)=>{
+  soukAmb('e2',t,1);setCam('e2',1400,kf(t,[[b(41.0),450],[b(44.95),430]]),kf(t,[[b(41.0),1.7],[b(44.95),1.95]]));
+  const th=talk('H',t);T('e2_H',1400,492+Math.sin(t*1.6)*2,0.92,0);
+  pose('e2_H',{talk:th,mouth:'frown',lid:Math.max(blink(t,1),0.25),gaze:t<b(42.3)?[0,8]:[6,10],brow:16,browY:2,aR:[30,-100],aL:t>b(42.3)?[-50,-100]:[-8,12],head:t>b(44.0)?-6:6,hy:4});
+});
+// E3: sunrise — he fixes the scale
+scene(b(44.95),b(47.75),scaleInsert('e3'),(t)=>{
+  const s=b(44.95);T('e3_sc',760,640,0.95,0);O('e3_bag',0);O('e3_pie',0);
+  const grab=E.inOut(P(t,b(46.3),0.45)),pull=E.inOut(P(t,b(46.8),0.5));
+  const wx=lerp(900,1280,pull),wy=lerp(455,300,pull);
+  T('e3_w',wx,wy,0.9,pull*25,1-P(t,b(47.45),0.25));O('e3_wg',0);
+  T('e3_hand',lerp(1500,wx+6,grab)+ (pull>0?0:0),lerp(-80,wy-10,grab),1,lerp(20,0,grab),1);
+  // needle: reads +0.5 with nothing on it, snaps to zero when the weight is pulled
+  setDial('e3_d',lerp(0.5,0,E.elastic(P(t,b(46.85),0.9))),10);
+  const k1=pop(t,s+0.3,0.4)*(1-E.in(P(t,b(46.8),0.2))),k2=pop(t,b(47.0),0.45);
+  $('e3_t1').innerHTML='الميزان فاضي... وبيقول: نص كيلو!';$('e3_t2').innerHTML='الميزان مظبوط ✓';$('e3_t2').style.background='#2F8F4E';
+  [['e3_t1',k1,-2],['e3_t2',k2,2]].forEach(([id,k,r])=>{$(id).style.transform=`scale(${Math.max(0,k).toFixed(3)}) rotate(${r}deg)`;$(id).style.opacity=clamp(k*3);});
+});
+// E4-E6: honest morning
+scene(b(47.75),ES+0.6,`<svg class="full" viewBox="0 0 1920 1080">${soukSet('e4')}<rect width="1920" height="1080" fill="#FFE2B0" opacity=".16"/><g id="e4_rays" transform="translate(700 380)">${[...Array(14)].map((_,i)=>`<path d="M-40 0 L0 -1700 L40 0 Z" fill="#FFF3D0" opacity=".12" transform="rotate(${i*25.7})"/>`).join('')}</g>
+  <g id="e4_extra">${mango(0,0,30,-20)}</g><g id="e4_hearts">${[0,1,2].map(i=>`<g id="e4_sp${i}"><use href="#spark" fill="#FFF3C0" filter="url(#glow)"/></g>`).join('')}</g></svg>
+  <div class="tag" id="e4_tag" style="left:1380px;top:560px;background:#2F8F4E;font-size:40px">٢٫١ كيلو</div>`,(t)=>{
+  soukAmb('e4',t,2);const s=b(47.75),cs=b(49.65),hs=b(52.75),ns=b(55.5);
+  const cx=kf(t,[[s,1560],[cs-0.4,1640],[cs+0.4,1230],[hs-0.2,1240],[hs+0.5,1440],[ns,1450],[ns+1.4,1400],[ES+0.6,1400]]),cy=kf(t,[[s,620],[cs-0.4,640],[cs+0.4,570],[hs-0.2,570],[hs+0.5,500],[ns,500],[ns+1.4,540],[ES+0.6,530]]),z=kf(t,[[s,1.35],[cs-0.4,1.4],[cs+0.4,1.0],[hs-0.2,1.03],[hs+0.5,1.3],[ns,1.34],[ns+1.6,.84],[ES+0.6,.8]]);
+  setCam('e4',cx,cy,z);$('e4_rays').setAttribute('transform',`translate(${700-(cx-1400)*.2} 380) rotate(${t*2})`);
+  const kb=E.out(P(t,s+0.1,0.7));T('e4_rotBox',lerp(1700,1860,kb),lerp(700,862,kb),1,0,kb);
+  const walk=E.out(P(t,cs-0.7,0.8));T('e4_C',lerp(560,960,walk),560+(walk<1?Math.abs(Math.sin(t*12))*-12:Math.sin(t*2)*2),1,0);
+  const tc=talk('C',t),sur=t>cs&&t<hs;
+  pose('e4_C',{talk:tc,mouth:sur?'o':'smile',oSize:9,eyes:sur?'w':'o',lid:blink(t,3),gaze:[10,-1],browY:sur?10:2,aL:sur?[-70,-90+Math.sin(t*6)*8]:[-6,10],aR:[6,-10],head:tc>0?Math.sin(t*4)*3:2});
+  const th=talk('H',t),give=E.inOut(P(t,hs+0.2,0.7));
+  T('e4_H',1400,492+Math.sin(t*2)*2,0.92,0);
+  pose('e4_H',{talk:th,mouth:t>hs?'grin':'smile',lid:Math.max(blink(t,1),t>hs?0.3:0),gaze:t<cs?[10,6]:[-9,3],brow:-4,browY:3,aR:t>hs?[lerp(8,70,give),lerp(-12,-40,give)]:[8,-12],aL:t<cs?[-40,-40]:[-8,12],head:th>0?Math.sin(t*4)*3:0});
+  setDial('e4_ds',t>cs-0.3?2.1*E.elastic(P(t,cs-0.3,1.0)):0,10);O('e4_glint',0);
+  const tg=$('e4_tag');const kt=pop(t,cs+0.9,0.4)*(1-E.in(P(t,hs+1.9,0.3)));tg.style.transform=`scale(${Math.max(0,kt).toFixed(3)})`;tg.style.opacity=clamp(kt*3);tg.style.left=(960+(1590-cx)*z+40).toFixed(0)+'px';tg.style.top=(540+(430-cy)*z-70).toFixed(0)+'px';
+  const ke=P(t,hs+0.5,0.8);const ex=lerp(1290,1040,E.inOut(ke)),ey=lerp(560,640,ke)-150*Math.sin(Math.PI*ke);
+  const scr=(wx,wy)=>[960+(wx-cx)*z,540+(wy-cy)*z];const [sx,sy]=scr(ex,ey);T('e4_extra',sx,sy,z*1.1,ke*200,ke>0&&ke<1?1:0);
+  for(let i=0;i<3;i++){const k=P(t,hs+1.3+i*0.15,0.9);const [px,py]=scr(1040+i*30,600-k*120);T('e4_sp'+i,px,py,0.3*(1-k),t*90,k>0&&k<1?1:0);}
+},{fo:1.0});
+
+// place the cast into their slots
+[['s1_hSlot','s1_H',HASB],['s2_hSlot','s2_H',HASB],['s2_cSlot','s2_C',CUS],['s3_hSlot','s3_H',HASB],['s4_hSlot','s4_H',HASB],['w1_hW','w1_H',HAS],['w1_mW','w1_M',MER],['w3_hW','w3_H',HAS],['w3_mW','w3_M',MER],['e1_cSlot','e1_H',HAS],['e2_hSlot','e2_H',HASB],['e4_hSlot','e4_H',HASB],['e4_cSlot','e4_C',CUS]].forEach(([slot,id,o])=>{$(slot).innerHTML=person(id,o);});
+
+// ================= freeze: split screen & medallions =================
+const MID=$('mid');
+MID.innerHTML=`<svg class="full" viewBox="0 0 1920 1080">
+ <defs><clipPath id="pcL"><rect x="-360" y="-300" width="720" height="600" rx="30"/></clipPath><clipPath id="pcR"><rect x="-360" y="-300" width="720" height="600" rx="30"/></clipPath><clipPath id="mcC"><circle r="300"/></clipPath></defs>
+ <g id="pnL"><g id="pnLc" clip-path="url(#pcL)"><g id="pnLin"><rect x="-400" y="-340" width="800" height="680" fill="#B88A5C"/>${[...Array(3)].map((_,r)=>[...Array(5)].map((_,c)=>crate(-300+c*150,300-r*100,140,96,r%2?'#A8693A':'#B9773F')).join('')).join('')}<rect x="-400" y="-340" width="800" height="680" fill="#3A2412" opacity=".3"/><g transform="translate(0 40) scale(1.15)" id="pnL_slot"></g></g></g>
+   <rect id="pnLf" x="-360" y="-300" width="720" height="600" rx="30" fill="none" stroke="url(#gGold)" stroke-width="8"/></g>
+ <g id="pnR"><g id="pnRc" clip-path="url(#pcR)"><g id="pnRin"><rect x="-400" y="-340" width="800" height="680" fill="#5A3A22"/><rect x="-400" y="150" width="800" height="200" fill="url(#gWood)"/><rect x="-400" y="140" width="800" height="22" fill="#C98A4E"/><g transform="translate(-150 40) scale(1.15)" id="pnR_slot"></g><g transform="translate(190 60) scale(.52)">${dialScale('pnR_ds',10,1)}</g><g transform="translate(250 -30)"><rect x="-26" y="-12" width="52" height="30" rx="5" fill="#5A6066" stroke="#2A2E32" stroke-width="3"/><circle id="pnR_wg" r="46" fill="#FF4A3A" opacity=".3"/></g></g></g>
+   <rect id="pnRf" x="-360" y="-300" width="720" height="600" rx="30" fill="none" stroke="url(#gGold)" stroke-width="8"/></g>
+ <g id="pnLab">
+  <g id="plL"><rect x="-250" y="-44" width="500" height="88" rx="44" fill="#0B2830" stroke="#D9B46A" stroke-width="3"/><text y="16" text-anchor="middle" font-family="Reem Kufi" font-size="42" fill="#F2D594">وهو بيشتري: عايز حقه كامل</text></g>
+  <g id="plR"><rect x="-250" y="-44" width="500" height="88" rx="44" fill="#0B2830" stroke="#D9B46A" stroke-width="3"/><text y="16" text-anchor="middle" font-family="Reem Kufi" font-size="42" fill="#F2D594">وهو بيبيع: بينقّص الميزان</text></g>
+  <g id="plEq"><circle r="62" fill="#0B2830" stroke="#D9B46A" stroke-width="4"/><text y="16" text-anchor="middle" font-family="Reem Kufi" font-size="42" fill="#FFD166">هو هو</text></g></g>
+ <!-- tafsir helper: + / - -->
+ <g id="tfL"><circle r="64" fill="#0B2830" stroke="#8FD9C8" stroke-width="4"/><text y="26" text-anchor="middle" font-family="Reem Kufi" font-size="84" fill="#8FD9C8">+</text></g>
+ <g id="tfR"><circle r="64" fill="#0B2830" stroke="#E58C6E" stroke-width="4"/><text y="22" text-anchor="middle" font-family="Reem Kufi" font-size="84" fill="#E58C6E">−</text></g>
+ <!-- theft icon (Sa'di) -->
+ <g id="thf"><circle r="150" fill="url(#rGlowG)" opacity=".5"/><g fill="none" stroke="#E2BE6E" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"><path d="M-70 -20 H70 L56 90 H-56 Z"/><path d="M-40 -20 C-40 -70 40 -70 40 -20"/><circle cy="34" r="22"/></g><g id="thfHand" fill="none" stroke="#E58C6E" stroke-width="7" stroke-linecap="round"><path d="M150 -90 L60 0"/><path d="M60 0 l-4 -26 M60 0 l26 -4"/></g></g>
+ <!-- hadith symbols: a heap of grain, light, rain -->
+ <g id="hd">
+  <g id="hdBeam"><path d="M-110 -700 L110 -700 L330 60 L-330 60 Z" fill="url(#rGlowG)" opacity=".5"/></g>
+  <g id="hdCloud"><ellipse rx="150" ry="44" fill="#C9D8DE"/><ellipse cx="60" cy="-30" rx="90" ry="44" fill="#DCE8EC"/><ellipse cx="-70" cy="-20" rx="76" ry="38" fill="#DCE8EC"/></g>
+  <g id="hdRain">${[...Array(18)].map((_,i)=>`<path id="hdr${i}" d="M0 0 l-5 22" stroke="#8FD0E8" stroke-width="5" stroke-linecap="round"/>`).join('')}</g>
+  <g id="hdHeap"><path d="M-300 60 C-200 -120 -90 -180 0 -190 C90 -180 200 -120 300 60 Z" fill="#E3BA62" stroke="#A87A2C" stroke-width="5"/>
+   <clipPath id="hdc"><path d="M-300 60 C-200 -120 -90 -180 0 -190 C90 -180 200 -120 300 60 Z"/></clipPath>
+   <g clip-path="url(#hdc)">${(()=>{const r=rng(8);let s='';for(let i=0;i<150;i++){s+=`<ellipse cx="${(r()*600-300).toFixed(0)}" cy="${(r()*250-190).toFixed(0)}" rx="9" ry="5" fill="${r()>.5?'#F3DB9A':'#C99A46'}" transform="rotate(${(r()*180).toFixed(0)} 0 0)" opacity=".8"/>`;}return s;})()}
+    <g id="hdWet"><path d="M-220 60 C-160 -40 -80 -70 0 -76 C80 -70 160 -40 220 60 Z" fill="#3E8FB0" opacity=".75"/>${[...Array(12)].map((_,i)=>`<circle cx="${-150+i*27}" cy="${-10+(i%3)*22}" r="5" fill="#BFE8F8"/>`).join('')}</g>
+    <g id="hdWetTop"><path d="M-110 -110 C-60 -170 60 -170 110 -110 C60 -130 -60 -130 -110 -110 Z" fill="#3E8FB0" opacity=".85"/>${[...Array(6)].map((_,i)=>`<circle cx="${-60+i*24}" cy="${-140+(i%2)*10}" r="5" fill="#BFE8F8"/>`).join('')}</g></g>
+   <ellipse cy="64" rx="330" ry="20" fill="#000" opacity=".25"/></g>
+  <g id="hdEyes">${[-420,-330,330,420].map((x,i)=>`<g transform="translate(${x} ${-40+(i%2)*60})" fill="none" stroke="#F2D594" stroke-width="5"><path d="M-34 0 Q0 -26 34 0 Q0 26 -34 0 Z"/><circle r="9" fill="#F2D594"/></g>`).join('')}</g>
+ </g>
+</svg>`;
+$('pnL_slot').innerHTML=person('pl_H',HAS);$('pnR_slot').innerHTML=person('pr_H',HAS);
+function updateMid(t){
+  const s=a(55.6);
+  // split panels slide in over the frozen frame, then become medallions for the transition
+  const inL=E.out(P(t,s,0.8)),inR=E.out(P(t,a(58.7),0.8));
+  const toM=E.inOut(P(t,a(62.0),1.6));
+  const out=1-E.sine(P(t,VS-0.9,0.7));
+  const pan=(id,x0,inK,mx)=>{const x=lerp(lerp(x0<960?-500:2420,x0,inK),mx,toM),y=lerp(470,470,toM),sc=lerp(1,0.36,toM);T(id,x,y,sc,0,inK*out);};
+  pan('pnL',520,inL,330);pan('pnR',1400,inR,1590);
+  ['L','R'].forEach(k=>{const r=lerp(30,300,toM);const c=document.querySelector(`#pc${k} rect`);c.setAttribute('rx',r.toFixed(0));$('pn'+k+'f').setAttribute('rx',r.toFixed(0));const w=lerp(720,600,toM);[c,$('pn'+k+'f')].forEach(e=>{e.setAttribute('x',(-w/2).toFixed(0));e.setAttribute('width',w.toFixed(0));});});
+  pose('pl_H',{talk:0.5+0.3*Math.sin(t*20),shout:1,mouth:'o',eyes:'w',brow:24,browY:-4,red:.45,aR:[150,40+Math.sin(t*24)*8],aL:[-150,-40+Math.sin(t*24)*8],head:Math.sin(t*30)*2});
+  pose('pr_H',{mouth:'grin',lid:.4,gaze:[10,6],brow:-12,aL:[-50,-30+Math.sin(t*6)*8],aR:[30,-118],head:Math.sin(t*2)*4,squint:.4});
+  setDial('pnR_ds',2,10);O('pnR_wg',0.2+0.2*Math.sin(t*8));
+  const lab=(1-toM);T('plL',520,820,pop(t,a(56.4),0.45),0,clamp(pop(t,a(56.4),0.45)*3)*lab*out);T('plR',1400,820,pop(t,a(59.6),0.45),0,clamp(pop(t,a(59.6),0.45)*3)*lab*out);
+  const ke=pop(t,a(59.05),0.5);T('plEq',960,470,ke*(1+0.05*Math.sin(t*6)),0,clamp(ke*3)*lab*out);
+  // tafsir helpers
+  const v1=win(t,a(75.5),a(79.2),0.5,0.5);T('tfL',330,560,pop(t,a(75.7),0.45),0,v1*clamp(pop(t,a(75.7),0.45)*3));T('tfR',1590,560,pop(t,a(77.6),0.45),0,v1*clamp(pop(t,a(77.6),0.45)*3));
+  const v2=win(t,b(6.0),b(9.9),0.5,0.5);T('thf',960,640,lerp(.8,1,v2),0,v2);$('thfHand').setAttribute('transform',`translate(${(Math.sin(t*3)*14).toFixed(1)} ${(Math.sin(t*3)*14).toFixed(1)})`);
+  // hadith symbols
+  const hv=win(t,b(11.2),b(33.1),0.9,0.7);T('hd',960,872,0.66,0,hv);
+  O('hdBeam',0.5+0.2*Math.sin(t*1.5));
+  const wet=E.out(P(t,b(16.2),0.9));O('hdWet',wet*(1-E.inOut(P(t,b(28.2),1.6))));
+  const cl=win(t,b(21.2),b(25.6),0.8,0.8);T('hdCloud',0,-292,0.8,0,cl);
+  for(let i=0;i<18;i++){const k=((t*1.6)+i/18)%1;T('hdr'+i,-130+((i*53)%260),-250+k*120,1,0,cl*(1-k));}
+  O('hdWetTop',E.out(P(t,b(28.4),1.4)));O('hdEyes',E.out(P(t,b(29.9),0.8)));
+}
+
+// ================= cards (tafsir, hadith, fatwa) =================
+function card(id,{hd='',tx,src='',x=960,y=420,w=1300,size=52}){const d=document.createElement('div');d.className='card';d.id=id;d.style.width=w+'px';d.style.left=(x-w/2)+'px';d.style.top=y+'px';
+ d.innerHTML=`${hd?`<div class="hd">${hd}</div>`:''}<div class="tx" style="font-size:${size}px">${tx}</div>${src?`<div class="src">${src}</div>`:''}`;UI.insertBefore(d,narrRoot);return d;}
+const CARDS=[
+ ['c_saadi1',{hd:'الشيخ السعدي',tx:'«﴿وَيْلٌ﴾ <span class="q">كلمة عذاب ووعيد</span>»',src:'تيسير الكريم الرحمن',y:400,w:1000,size:60},a(67.3),a(70.6)],
+ ['c_kathir',{hd:'الحافظ ابن كثير',tx:'«والمراد بالتطفيف هاهنا: <span class="q">البخس في المكيال والميزان</span>،<br>إما بالازدياد إن اقتضى من الناس، وإما بالنقصان إن قضاهم»',src:'تفسير القرآن العظيم',y:370,w:1080,size:44},a(71.8),a(79.1)],
+ ['c_tabari',{hd:'الإمام الطبري',tx:'«للذين <span class="q">ينقصون الناس، ويبخسونهم حقوقهم</span>»',src:'جامع البيان في تأويل القرآن',y:400,w:1150,size:54},b(0.2),b(5.95)],
+ ['c_saadi2',{hd:'الشيخ السعدي',tx:'«فهذا <span class="q">سرقة لأموال الناس</span>، وعدم إنصاف لهم منهم»',src:'تيسير الكريم الرحمن',y:300,w:1200,size:54},b(6.2),b(9.9)],
+ ['c_hadith',{hd:'من صحيح مسلم — عن أبي هريرة رضي الله عنه',tx:'<div class="ln" id="hl0">أن رسول الله صلى الله عليه وسلم مرّ على صُبرة طعام، فأدخل يده فيها، فنالت أصابعه بللًا</div><div class="ln" id="hl1">فقال: <span class="q">«ما هذا يا صاحبَ الطعام؟»</span></div><div class="ln" id="hl2">قال: أصابته السماءُ يا رسول الله</div><div class="ln" id="hl3">قال: <span class="q">«أفلا جعلتَه فوق الطعام كي يراه الناس؟</span></div><div class="ln" id="hl4" style="font-size:74px;font-weight:700"><span class="q">مَن غَشَّ فليس مِنّي»</span></div>',src:'صحيح مسلم (١٠٢)',y:70,w:1560,size:42},b(11.4),b(33.1)],
+ ['c_ifta',{hd:'دار الإفتاء المصرية',tx:'الغِشّ في البيع والشراء <span class="q" style="font-size:78px;font-weight:700">حرامٌ شرعًا</span>',y:380,w:1150,size:60},b(33.4),b(38.5)],
+];
+CARDS.forEach(c=>{c.el=card(c[0],c[1]);c.a=c[2];c.b=c[3];});
+const HL=[b(11.6),b(18.6),b(21.3),b(28.0),b(31.2)];
+function updateCards(t){CARDS.forEach(c=>{const v=win(t,c.a,c.b,0.7,0.6);if(v<=0.001){c.el.style.display='none';return;}c.el.style.display='block';c.el.style.opacity=v.toFixed(3);c.el.style.transform=`translateY(${((1-v)*18).toFixed(1)}px) scale(${lerp(.97,1,v).toFixed(4)})`;});
+  HL.forEach((ts,i)=>{const e=$('hl'+i),k=E.out(P(t,ts,0.8));e.style.opacity=k.toFixed(3);e.style.transform=`translateY(${((1-k)*14).toFixed(1)}px)`;});}
+
+// ================= verses (exact KFGQPC text; no TTS — silent slots for the Qari) =================
+const VR=$('verses');const mark=n=>'۝'+ar(n);
+function verseEl(html,size,y){const d=document.createElement('div');d.className='verse';d.style.fontSize=size+'px';d.style.top=(y-size*0.95)+'px';d.innerHTML=html;VR.appendChild(d);return d;}
+function reveal(el,k){const p=(k*118-9).toFixed(1);const m=`linear-gradient(to left,#000 0%,#000 ${p}%,transparent ${(+p+9).toFixed(1)}%)`;el.style.webkitMaskImage=m;el.style.maskImage=m;}
+const AY=Q.ayat.map((x,i)=>x+' '+mark(i+1));
+// slot 1 (VS..VE): basmala, then each verse; they stay and gather
+const S1=[{el:verseEl(Q.basmala,84,250),w:VS+0.5,wd:1.8},{el:verseEl(AY[0],124,430),w:VS+6.5,wd:1.6},{el:verseEl(AY[1],80,600),w:VS+13.0,wd:2.6},{el:verseEl(AY[2],80,750),w:VS+21.5,wd:2.6}];
+// docked reminders during the tafsir
+const DK=[{el:verseEl(AY[0],58,150),a:a(66.3),b:a(70.6)},{el:verseEl(AY[1],46,120),a:a(70.8),b:b(9.9)},{el:verseEl(AY[2],46,205),a:a(70.8),b:b(9.9)}];
+// end card (ES..SAD): basmala + the three verses gathered, then "sadaqa"
+const S2=[{el:verseEl(Q.basmala,80,240),w:ES+0.8,wd:1.8},{el:verseEl(AY[0],104,400),w:ES+7.0,wd:1.6},{el:verseEl(AY[1],76,550),w:ES+13.0,wd:2.6},{el:verseEl(AY[2],76,690),w:ES+21.0,wd:2.6}];
+const sad=document.createElement('div');sad.id='sadaqa';sad.textContent='صدق الله العظيم';sad.style.top='790px';VR.appendChild(sad);
+function updateVerses(t){
+  const act1=[VS+0.5,VS+6.5,VS+13.0,VS+21.5,VE-1.2];
+  S1.forEach((v,i)=>{const on=t>=v.w-0.2&&t<VE+0.8;if(!on){v.el.style.display='none';return;}v.el.style.display='block';reveal(v.el,E.inOut(P(t,v.w,v.wd)));
+    const cur=t<act1[i+1]||i===3||t>act1[4];const dim=cur?1:0.5;v.el.style.opacity=(dim*(1-E.sine(P(t,VE-0.1,0.8)))).toFixed(3);});
+  DK.forEach(v=>{const o=win(t,v.a,v.b,0.8,0.6);v.el.style.display=o<=0.001?'none':'block';v.el.style.opacity=o.toFixed(3);v.el.style.webkitMaskImage='none';});
+  S2.forEach(v=>{const on=t>=v.w-0.2;if(!on){v.el.style.display='none';return;}v.el.style.display='block';reveal(v.el,E.inOut(P(t,v.w,v.wd)));v.el.style.opacity=1;});
+  const ks=E.out(P(t,SAD+0.4,1.4));sad.style.opacity=ks.toFixed(3);sad.style.transform=`translateY(${((1-ks)*16).toFixed(1)}px)`;sad.style.display=t<SAD?'none':'block';
+  const ar_=Math.max(win(t,VS+0.1,VE+0.6,0.9,0.8),E.sine(P(t,ES+0.2,1.2)));
+  O('arch',ar_);const dl=4400;['archP1','archP2'].forEach(id=>{const p=$(id);p.setAttribute('stroke-dasharray',dl);p.setAttribute('stroke-dashoffset',(dl*(1-E.out(clamp(ar_*1.6)))).toFixed(0));});O('archGlow',0.18+0.1*Math.sin(t*1.3));
+}
+
+// ================= lower thirds =================
+const LTS=[['عم حسن','فكهاني السوق',a(2.3),a(5.4),150,800],['تاجر الجملة','صاحب الوكالة',a(34.8),a(37.6),150,800]];
+LTS.forEach(l=>{const d=document.createElement('div');d.className='lt';d.innerHTML=`<div class="a">${l[0]}</div><div class="b">${l[1]}</div>`;d.style.left=l[4]+'px';d.style.top=l[5]+'px';UI.insertBefore(d,narrRoot);l.el=d;});
+function updateLT(t){LTS.forEach(l=>{const v=win(t,l[2],l[3],0.45,0.4);l.el.style.display=v<=0.001?'none':'flex';l.el.style.opacity=v.toFixed(3);l.el.style.transform=`translateX(${((1-E.out(P(t,l[2],0.45)))*-80).toFixed(1)}px)`;l.el.style.clipPath=`inset(0 0 0 ${((1-E.out(P(t,l[2],0.55)))*100).toFixed(1)}%)`;});}
+
+// ================= global look =================
+const gctx=$('grain').getContext('2d');const GR=[];(()=>{const r=rng(4);for(let f=0;f<6;f++){const id=gctx.createImageData(480,270);for(let i=0;i<id.data.length;i+=4){const v=r()*255;id.data[i]=id.data[i+1]=id.data[i+2]=v;id.data[i+3]=255;}GR.push(id);}})();
+const bctx=$('beams').getContext('2d');const BR=rng(3);const MOTES=[...Array(60)].map(()=>({x:BR()*W,y:BR()*H,s:4+BR()*12,r:.8+BR()*2.2,ph:BR()*6.28}));
+// how "Islamic" the frame is (0 film, 1 elegant)
+const islAmt=t=>Math.max(win(t,a(62.2),b(38.6),1.6,0.9),E.sine(P(t,ES-0.2,1.0)));
+function seek(t){
+  SC.forEach(sc=>{const v=Math.min(sc.fi?P(t,sc.s,sc.fi):(t>=sc.s?1:0),1-(sc.fo?P(t,sc.e-sc.fo,sc.fo):(t>=sc.e?1:0)));if(v<=0.001){sc.el.style.display='none';return;}sc.el.style.display='block';sc.el.style.opacity=v.toFixed(3);sc.update(t);});
+  // freeze look
+  const fz=a(54.9);const g=E.sine(P(t,fz,0.7))*(t<b(30)?1:0);$('film').style.filter=g>0.01?`grayscale(${g.toFixed(2)}) contrast(${(1+0.1*g).toFixed(2)}) brightness(${(1-0.25*g).toFixed(2)})`:'none';
+  const ia=islAmt(t);$('isl').style.opacity=ia.toFixed(3);
+  $('patR').setAttribute('transform',`translate(${((t*6)%200).toFixed(1)} ${((t*3)%200).toFixed(1)})`);
+  bctx.clearRect(0,0,W,H);if(ia>0.01){for(let i=0;i<3;i++){const x=960+Math.sin(t*.10+i*1.9)*560,w=260+i*60;const gr=bctx.createLinearGradient(x,0,x,H);gr.addColorStop(0,'rgba(255,226,160,0.045)');gr.addColorStop(1,'rgba(255,226,160,0)');bctx.fillStyle=gr;bctx.beginPath();bctx.moveTo(x-w*.3,-10);bctx.lineTo(x+w*.3,-10);bctx.lineTo(x+w*1.6,H);bctx.lineTo(x-w*1.6,H);bctx.closePath();bctx.fill();}
+    MOTES.forEach(m=>{const y=((m.y-t*m.s)%H+H)%H,x=m.x+Math.sin(t*.4+m.ph)*30;const al=.12+.3*Math.sin(t*1.3+m.ph)**2;bctx.fillStyle=`rgba(255,228,170,${al.toFixed(3)})`;bctx.beginPath();bctx.arc(x,y,m.r,0,6.283);bctx.fill();});}
+  updateMid(t);updateVerses(t);updateCards(t);updateText(t);updateLT(t);
+  gctx.putImageData(GR[Math.floor(t*FPS)%6],0,0);$('grain').style.opacity=(0.10*(1-ia*0.6)).toFixed(3);
+  const bars=1-ia;$('barT').style.transform=`translateY(${(-46*(1-bars)).toFixed(1)}px)`;$('barB').style.transform=`translateY(${(46*(1-bars)).toFixed(1)}px)`;
+  $('flashW').style.opacity=(bell(t,fz-0.02,0.35)*0.75).toFixed(3);
+  $('fade').style.opacity=Math.max(1-t/0.9,P(t,DUR-1.3,1.3)).toFixed(3);
+}
+window.seek=seek;window.DUR=DUR;seek(0);
+</script>
+</body>
+</html>
