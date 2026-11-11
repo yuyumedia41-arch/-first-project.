@@ -647,7 +647,7 @@ function seek(t){
   bctx.clearRect(0,0,W,H);if(ia>0.01){for(let i=0;i<3;i++){const x=960+Math.sin(t*.10+i*1.9)*560,w=260+i*60;const gr=bctx.createLinearGradient(x,0,x,H);gr.addColorStop(0,'rgba(255,226,160,0.045)');gr.addColorStop(1,'rgba(255,226,160,0)');bctx.fillStyle=gr;bctx.beginPath();bctx.moveTo(x-w*.3,-10);bctx.lineTo(x+w*.3,-10);bctx.lineTo(x+w*1.6,H);bctx.lineTo(x-w*1.6,H);bctx.closePath();bctx.fill();}
     MOTES.forEach(m=>{const y=((m.y-t*m.s)%H+H)%H,x=m.x+Math.sin(t*.4+m.ph)*30;const al=.12+.3*Math.sin(t*1.3+m.ph)**2;bctx.fillStyle=`rgba(255,228,170,${al.toFixed(3)})`;bctx.beginPath();bctx.arc(x,y,m.r,0,6.283);bctx.fill();});}
   updateMid(t);updateVerses(t);updateCards(t);updateText(t);updateLT(t);
-  gctx.putImageData(GR[Math.floor(t*FPS)%6],0,0);$('grain').style.opacity=(0.10*(1-ia*0.6)).toFixed(3);
+  $('grain').style.display='none';
   const bars=1-ia;$('barT').style.transform=`translateY(${(-46*(1-bars)).toFixed(1)}px)`;$('barB').style.transform=`translateY(${(46*(1-bars)).toFixed(1)}px)`;
   $('flashW').style.opacity=(bell(t,fz-0.02,0.35)*0.75).toFixed(3);
   $('fade').style.opacity=Math.max(1-t/0.9,P(t,DUR-1.3,1.3)).toFixed(3);
