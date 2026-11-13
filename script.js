@@ -22,6 +22,8 @@ const EN = {
   p2s: "AI Video Ad · Watch the ad",
   p3: "Data Analytics Company",
   p3s: "AI Video Ad · Watch the ad",
+  p4: "Yasmin Kids",
+  p4s: "AI Video Ad · Watch the ad",
   services_title: "Services & Tools",
   services_label: "Services",
   sv1: "AI Video Ads",

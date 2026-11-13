@@ -208,17 +208,18 @@ html[lang="en"] .block-head h3, html[lang="en"] .col h3, html[lang="en"] .contac
 .block-head .line { flex: 1; height: 1px; background: var(--line); }
 
 /* ===== Projects ===== */
-.projects { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.6rem; perspective: 1200px; }
+.projects { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.4rem; perspective: 1200px; }
 .project { display: block; cursor: pointer; }
 .shot.has-media { color: #fff; }
 .shot.has-media img { object-position: center 28%; transition: transform 1s var(--ease); }
 .shot.has-media::before { content: ""; position: absolute; inset: 0; z-index: 0; background: linear-gradient(to top, rgba(8, 8, 8, .75), transparent 55%); }
 .shot.nashama img { object-position: center 45%; }
 .shot.data-co img { object-position: center 42%; }
+.shot.yasmin img { object-position: center 40%; }
 .project:hover .shot.has-media img { transform: scale(1.06); }
 .shot.has-media .shot-tag { z-index: 1; opacity: .85; background: rgba(0, 0, 0, .35); }
 .shot {
-  position: relative; aspect-ratio: 16 / 11; overflow: hidden;
+  position: relative; aspect-ratio: 4 / 5; overflow: hidden;
   border: 1px solid var(--line); display: flex; align-items: center; padding: 1.8rem;
   transform: rotateX(var(--rx, 0)) rotateY(var(--ry, 0));
   transition: border-color .4s, transform .4s var(--ease);
@@ -361,6 +362,7 @@ html[lang="en"] .avail-btn { text-transform: uppercase; font-size: .78rem; lette
   .quote { grid-column: 1 / -1; border-inline-start: 0; border-top: 1px solid var(--line); }
   .contact { grid-template-columns: 1fr 1fr; }
   .contact-photo { display: none; }
+  .projects { grid-template-columns: repeat(2, 1fr); }
   .avail { display: none; }
 }
 @media (max-width: 860px) {
